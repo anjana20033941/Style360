@@ -1,0 +1,26 @@
+{
+  "name": "mystyle360project",
+  "version": "1.0.0",
+  "description": "Style360 — AI Virtual Try-On & 3D Fitting Platform",
+  "main": "dev.js",
+  "scripts": {
+    "dev": "node dev.js",
+    "start": "node dev.js",
+    "serve": "node dev.js"
+  },
+  "keywords": [
+    "virtual-tryon",
+    "3d-avatar",
+    "style360",
+    "trellis",
+    "vton",
+    "tripo3d",
+    "fal-ai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^2.18.0",
+    "dotenv": "^17.4.2"
+  }
+}

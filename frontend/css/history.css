@@ -1,0 +1,300 @@
+/* ==========================================================================
+   Style360 — History & Gallery Image Card Styles (history.css)
+   Ensures optimal aspect ratio, face/head alignment, and full-screen lightbox
+   ========================================================================== */
+
+/* ─── 1. History & Gallery Card Image Alignment ─── */
+.history-card img,
+.gallery-card-img,
+.history-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important;
+    object-position: top center !important;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── 2. Balanced Aspect Ratio Container ─── */
+.history-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    min-height: 380px;
+    background: #0F0E2A;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.history-card:hover .history-img-wrap img,
+.history-card:hover img {
+    transform: scale(1.04);
+}
+
+/* ─── 3. Full-View Lightbox Modal Styling ─── */
+.history-lightbox-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+}
+
+.lightbox-dialog {
+    position: relative;
+    background: #FFFFFF;
+    border-radius: 28px;
+    max-width: 860px;
+    width: 95vw;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+    animation: lightboxPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 1;
+}
+
+.lightbox-header {
+    flex-shrink: 0;
+    padding: 1.25rem 2rem 0.85rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.lightbox-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0B0A1A;
+    overflow: hidden;
+}
+
+.lightbox-img-wrapper {
+    position: relative;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.lightbox-img-wrapper img,
+#lightbox-img {
+    max-height: calc(92vh - 210px) !important;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 14px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+    object-fit: contain !important;
+    object-position: center center !important;
+    background: #FFFFFF;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+.lightbox-footer {
+    flex-shrink: 0;
+    padding: 1rem 2rem;
+    background: #FFFFFF;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* ─── 4. Responsive Breakpoints ─── */
+@media (max-width: 768px) {
+    .history-img-wrap {
+        aspect-ratio: 3/4;
+        min-height: 320px;
+    }
+
+    .lightbox-dialog {
+        max-width: 96vw;
+        max-height: 96vh;
+        border-radius: 20px;
+    }
+
+    .lightbox-header {
+        padding: 0.85rem 1.25rem;
+    }
+
+    .lightbox-body {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .lightbox-img-wrapper img,
+    #lightbox-img {
+        max-height: calc(96vh - 180px) !important;
+    }
+
+    .lightbox-footer {
+        padding: 0.75rem 1.25rem;
+        gap: 8px;
+    }
+}
+
+/* ─── 5. Horizontal Progress Tracker UI Layout ─── */
+.tracker-container {
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    border-top: 1px solid #F1F5F9;
+    margin-top: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tracker-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #1E1B4B;
+    margin-bottom: 1.75rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tracker-steps,
+.tracker-steps-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    max-width: 680px;
+    margin: 1.5rem auto 1rem auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+.tracker-line-track {
+    position: absolute;
+    top: 21px;
+    left: 60px;
+    right: 60px;
+    height: 4px;
+    background: #E2E8F0;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.tracker-line-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7C3AED, #10B981);
+    transition: width 0.4s ease;
+    border-radius: 4px;
+}
+
+.tracker-step {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    position: relative !important;
+    z-index: 2;
+    text-align: center;
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2.5px solid #CBD5E1;
+    color: #94A3B8;
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.tracker-step.completed .step-circle {
+    background: #10B981;
+    border-color: #10B981;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.tracker-step.active .step-circle {
+    background: #7C3AED;
+    border-color: #7C3AED;
+    color: #FFFFFF;
+    box-shadow: 0 0 0 5px #EDE9FE;
+    animation: pulseTrackerCircle 2s infinite;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748B;
+    margin-bottom: 3px;
+    white-space: nowrap;
+}
+
+.tracker-step.active .step-label {
+    color: #7C3AED;
+    font-weight: 800;
+}
+
+.tracker-step.completed .step-label {
+    color: #059669;
+    font-weight: 800;
+}
+
+.step-desc {
+    font-size: 0.72rem;
+    color: #94A3B8;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .tracker-steps,
+    .tracker-steps-wrap {
+        max-width: 100%;
+        padding: 0;
+    }
+    .tracker-step {
+        width: 90px;
+    }
+    .tracker-line-track {
+        left: 35px;
+        right: 35px;
+    }
+    .step-label {
+        font-size: 0.75rem;
+    }
+    .step-desc {
+        display: none;
+    }
+}
+

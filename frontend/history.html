@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Try-On History — Style360 AI Virtual Try-On</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/style.css?v=22" />
+    <link rel="stylesheet" href="css/home.css?v=9" />
+    <link rel="stylesheet" href="css/history.css?v=3" />
+    <link rel="stylesheet" href="css/tracker.css?v=2" />
+
+    <style>
+        body {
+            background-color: #F8F6FF;
+            background-image: 
+                radial-gradient(ellipse at 10% 30%, rgba(124, 58, 237, 0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 20%, rgba(236, 72, 153, 0.06) 0%, transparent 45%);
+            min-height: 100vh;
+            color: #0F172A;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .history-hero {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 3rem 2rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .history-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: #F3E8FF;
+            color: #7C3AED;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .history-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0 0 0.6rem 0;
+        }
+
+        .history-sub {
+            font-size: 1rem;
+            color: #64748B;
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .history-grid-container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 4rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .history-grid-container {
+                grid-template-columns: 1fr;
+                padding: 1rem 1rem 3rem 1rem;
+            }
+        }
+
+        .history-card {
+            background: #FFFFFF;
+            border: 1.5px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .history-card:hover {
+            transform: translateY(-4px);
+            border-color: #C084FC;
+            box-shadow: 0 18px 45px rgba(124, 58, 237, 0.12);
+        }
+
+        .history-img-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3/4;
+            min-height: 380px;
+            background: #0F0E2A;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .history-img-wrap img,
+        .history-card img,
+        .gallery-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .history-card:hover .history-img-wrap img,
+        .history-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .img-zoom-hint {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.15) 50%, transparent 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+        }
+
+        .history-card:hover .img-zoom-hint {
+            opacity: 1;
+        }
+
+        .zoom-hint-pill {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1E1B4B;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 50px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(8px);
+        }
+
+        .history-tag-date {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            color: #FFFFFF;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            z-index: 2;
+        }
+
+        .history-badge-ai {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .history-card-body {
+            padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .history-outfit-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0;
+            line-height: 1.35;
+        }
+
+        .history-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #64748B;
+            font-weight: 600;
+        }
+
+        .history-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .btn-history-3d {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-history-3d.btn-3d-view {
+            background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+        }
+
+        .btn-history-3d.btn-3d-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.42);
+        }
+
+        .btn-history-3d.btn-3d-generate {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.28);
+        }
+
+        .btn-history-3d.btn-3d-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.42);
+        }
+
+        .btn-history-3d.is-loading {
+            opacity: 0.85;
+            cursor: wait;
+            transform: none !important;
+            pointer-events: none;
+        }
+
+        .spinner-3d {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #FFFFFF;
+            border-radius: 50%;
+            animation: spin3d 0.75s linear infinite;
+        }
+
+        @keyframes spin3d {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-history-dl {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1.5px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 0.84rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-history-dl:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+            color: #0F172A;
+        }
+
+        /* ─── High-Res Lightbox Modal ─── */
+        .history-lightbox-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .lightbox-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+        }
+
+        .lightbox-dialog {
+            position: relative;
+            background: #FFFFFF;
+            border-radius: 28px;
+            max-width: 860px;
+            width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            animation: lightboxPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+        }
+
+        @keyframes lightboxPop {
+            0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .lightbox-header {
+            flex-shrink: 0;
+            padding: 1.25rem 2rem 0.85rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .lightbox-badge-ai {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .lightbox-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0 0 6px 0;
+        }
+
+        .lightbox-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .lightbox-meta-pill {
+            font-size: 0.76rem;
+            font-weight: 700;
+            background: #F1F5F9;
+            color: #64748B;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-lightbox-close {
+            background: #F1F5F9;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748B;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-lightbox-close:hover {
+            background: #E2E8F0;
+            color: #0F172A;
+            transform: rotate(90deg);
+        }
+
+        .lightbox-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0B0A1A;
+            overflow: hidden;
+        }
+
+        .lightbox-img-wrapper {
+            position: relative;
+            max-width: 100%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .lightbox-img-wrapper img,
+        #lightbox-img {
+            max-height: calc(92vh - 210px) !important;
+            max-width: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            border-radius: 14px;
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+            object-fit: contain !important;
+            object-position: center center !important;
+            background: #FFFFFF;
+            display: block !important;
+            margin: 0 auto !important;
+        }
+
+        .lightbox-footer {
+            flex-shrink: 0;
+            padding: 1rem 2rem;
+            background: #FFFFFF;
+            border-top: 1px solid #F1F5F9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .lightbox-res-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #059669;
+            background: #ECFDF5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #A7F3D0;
+        }
+
+        .lightbox-footer-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-lightbox-dl {
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: #FFFFFF;
+            border: 1.5px solid #CBD5E1;
+            color: #1E293B;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-lightbox-dl:hover {
+            background: #F8FAFC;
+            border-color: #94A3B8;
+        }
+
+        .btn-lightbox-3d-view {
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+            color: #FFFFFF;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-lightbox-3d-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+        }
+
+        .btn-lightbox-3d-generate {
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            color: #FFFFFF;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-lightbox-3d-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.38);
+        }
+
+        .btn-lightbox-dismiss {
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: #F1F5F9;
+            border: none;
+            color: #64748B;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-lightbox-dismiss:hover {
+            background: #E2E8F0;
+            color: #0F172A;
+        }
+
+        /* ─── Tab Switcher Navigation ─── */
+        .history-tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 auto 2.5rem auto;
+            max-width: 600px;
+            padding: 0 1rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1.5px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #64748B;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .tab-btn:hover {
+            color: #7C3AED;
+            border-color: #C084FC;
+            background: #FAF5FF;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .tab-badge {
+            background: #F1F5F9;
+            color: #475569;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+        }
+
+        /* ─── Custom Requests & Status Tracker Container ─── */
+        .custom-reqs-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .custom-req-card {
+            background: #FFFFFF;
+            border: 1.5px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .custom-req-card:hover {
+            border-color: #C084FC;
+            box-shadow: 0 16px 40px rgba(124, 58, 237, 0.1);
+        }
+
+        .req-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .req-garment-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .req-garment-thumb {
+            width: 72px;
+            height: 90px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 1.5px solid #E2E8F0;
+            background: #F8FAFC;
+        }
+
+        .req-title-wrap h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1E1B4B;
+        }
+
+        .req-id-badge {
+            font-size: 0.78rem;
+            color: #7C3AED;
+            font-weight: 800;
+            background: #F3E8FF;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .req-card-meta {
+            font-size: 0.82rem;
+            color: #64748B;
+        }
+
+        .req-details-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            background: #F8FAFC;
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: 1px solid #EDF2F7;
+        }
+
+        .color-swatch-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #334155;
+            background: #FFFFFF;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .color-swatch-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        /* ─── 3-Stage Interactive Progress Tracker ─── */
+        .status-tracker-wrap {
+            padding: 1.5rem 1rem 0.5rem 1rem;
+            border-top: 1px solid #F1F5F9;
+        }
+
+        .tracker-steps,
+        .tracker-steps-wrap {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            position: relative !important;
+            max-width: 680px;
+            margin: 1.5rem auto 1rem auto;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+
+        .tracker-line-track {
+            position: absolute;
+            top: 21px;
+            left: 60px;
+            right: 60px;
+            height: 4px;
+            background: #E2E8F0;
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .tracker-line-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7C3AED, #10B981);
+            transition: width 0.4s ease;
+            border-radius: 4px;
+        }
+
+        .tracker-step {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            position: relative !important;
+            z-index: 2;
+            text-align: center;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .step-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 2.5px solid #CBD5E1;
+            color: #94A3B8;
+            font-size: 0.9rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tracker-step.completed .step-circle {
+            background: #10B981;
+            border-color: #10B981;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .tracker-step.active .step-circle {
+            background: #7C3AED;
+            border-color: #7C3AED;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 4px #EDE9FE;
+            animation: pulseTrackerCircle 2s infinite;
+        }
+
+        @keyframes pulseTrackerCircle {
+            0%, 100% { box-shadow: 0 0 0 4px #EDE9FE; }
+            50% { box-shadow: 0 0 0 9px rgba(124, 58, 237, 0.22); }
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 2px;
+        }
+
+        .tracker-step.active .step-label {
+            color: #7C3AED;
+        }
+
+        .tracker-step.completed .step-label {
+            color: #059669;
+        }
+
+        .step-desc {
+            font-size: 0.72rem;
+            color: #94A3B8;
+        }
+
+        /* ─── Ready for Download Result Showcase ─── */
+        .ready-result-box {
+            margin-top: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
+            border: 1.5px solid #A7F3D0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ready-result-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .ready-dress-thumb {
+            width: 84px;
+            height: 106px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2.5px solid #FFFFFF;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-download-dress {
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-download-dress:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.45);
+        }
+
+        .empty-tracker-card {
+            background: #FFFFFF;
+            border: 1.5px dashed #CBD5E1;
+            border-radius: 24px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #64748B;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with User Avatar Dropdown -->
+    <header class="app-header" id="main-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" id="nav-home-logo" style="display: flex; align-items: center;">
+                <img src="images/user_logo.jpeg" alt="Style360 Logo" style="height: 105px; max-height: 115px; width: auto; object-fit: contain; display: block;" />
+            </a>
+
+            <nav class="main-nav" id="main-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#tryon" class="nav-link">Try On</a>
+                <a href="my-3d-models.html" class="nav-link nav-link-studio" id="nav-studio-link">My 3D Models</a>
+            </nav>
+
+            <div class="header-actions">
+                <!-- User Bell Notification Dropdown -->
+                <div class="notification-menu-container" id="notification-menu-wrap" style="display:none;">
+                    <button type="button" class="notification-bell-btn" id="notification-bell" data-alias-id="btn-notification-bell" aria-label="Notifications" title="Notifications">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge" id="notification-badge" style="display:none;">0</span>
+                    </button>
+                    <div class="notification-dropdown-menu" id="notification-dropdown" data-alias-id="notification-dropdown-menu">
+                        <div class="notif-dropdown-head">
+                            <h4>🔔 Notifications</h4>
+                            <button type="button" class="btn-mark-all-read" id="btn-mark-all-read">Mark all read</button>
+                        </div>
+                        <div class="notif-list-container" id="notif-list-container">
+                            <div class="notif-empty-state">No new notifications</div>
+                        </div>
+                        <div class="notif-dropdown-foot">
+                            <a href="history.html?tab=custom-requests" class="notif-view-all-link">View Custom Requests Tracker &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auth Action Buttons (Visible for Guests) -->
+                <div class="header-auth-buttons" id="header-auth-btns" style="display:none;">
+                    <a href="auth.html?mode=signin" class="btn-header-signin" id="btn-header-signin">Sign In</a>
+                    <a href="auth.html?mode=signup" class="btn-header-signup" id="btn-header-signup">Sign Up</a>
+                </div>
+
+                <!-- Modern User Profile Avatar & Floating Dropdown Menu (Visible for Authenticated Users) -->
+                <div class="user-menu-container" id="user-menu-wrap" style="display:none;">
+                    <button class="user-avatar-btn" id="btn-user-avatar" aria-label="User Account Menu" title="User Menu">
+                        <span class="user-avatar-initials" id="header-avatar-initials">👤</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <div class="dropdown-user-header">
+                            <div class="dropdown-avatar-circle" id="drop-avatar-circle">👤</div>
+                            <div class="dropdown-user-info">
+                                <h4 id="drop-user-name">Guest User</h4>
+                                <p id="drop-user-email">Sign in to sync your looks</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span>Edit Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item active" style="background:#F5F3FF; color:#7C3AED;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>My Try-On History</span>
+                        </a>
+                        <a href="my-3d-models.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                            <span>My 3D Models</span>
+                        </a>
+                        <a href="admin.html" class="dropdown-item" id="drop-admin-link" style="display:none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Admin Console</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item signout-item" id="btn-dropdown-signout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section class="history-hero">
+            <span class="history-badge">✨ Neural Try-On Archive &amp; Studio</span>
+            <h1 class="history-title">My Fashion Studio Hub</h1>
+            <p class="history-sub">Browse, inspect, and download your 2D virtual try-ons, launch 3D reconstructions, or track bespoke custom tailoring requests in real-time.</p>
+        </section>
+
+        <!-- Tab Switcher Navigation -->
+        <div class="history-tabs-nav">
+            <button type="button" class="tab-btn active" id="tab-btn-tryons" data-tab="tryons">
+                ✨ Virtual Try-Ons <span class="tab-badge" id="tryon-count-badge">0</span>
+            </button>
+            <button type="button" class="tab-btn" id="tab-btn-custom-reqs" data-tab="custom-reqs">
+                📋 Custom Requests &amp; Tracker <span class="tab-badge" id="custom-req-count-badge">0</span>
+            </button>
+        </div>
+
+        <!-- Section 1: Virtual Try-On Archive -->
+        <section class="history-grid-container" id="history-grid">
+            <!-- Dynamically populated -->
+        </section>
+
+        <!-- Section 2: Custom Requests & Interactive Tracker -->
+        <section class="custom-reqs-container" id="custom-reqs-container" style="display:none;">
+            <!-- Dynamically populated with 3-stage progress trackers -->
+        </section>
+    </main>
+
+    <!-- High-Res Image Lightbox Modal -->
+    <div class="history-lightbox-modal" id="history-lightbox-modal" style="display:none;" aria-hidden="true">
+        <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+        <div class="lightbox-dialog" role="dialog" aria-modal="true">
+            <div class="lightbox-header">
+                <div class="lightbox-title-wrap">
+                    <span class="lightbox-badge-ai">⚡ Fal.ai High-Res VTON</span>
+                    <h3 id="lightbox-title" class="lightbox-title">Virtual Try-On Output</h3>
+                    <div class="lightbox-meta">
+                        <span id="lightbox-category" class="lightbox-meta-pill">Category</span>
+                        <span id="lightbox-date" class="lightbox-meta-pill">Date</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-lightbox-close" id="btn-lightbox-close" aria-label="Close Lightbox">✕</button>
+            </div>
+            <div class="lightbox-body">
+                <div class="lightbox-img-wrapper">
+                    <img id="lightbox-img" src="" alt="High-Res Try-On Preview" />
+                </div>
+            </div>
+            <div class="lightbox-footer">
+                <div class="lightbox-footer-left">
+                    <span class="lightbox-res-badge">HD Photorealistic AI Output</span>
+                </div>
+                <div class="lightbox-footer-actions">
+                    <a id="lightbox-dl-btn" href="#" download class="btn-lightbox-dl">📥 Download High-Res</a>
+                    <div id="lightbox-3d-action-slot"></div>
+                    <button type="button" class="btn-lightbox-dismiss" id="btn-lightbox-dismiss">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js?v=1"></script>
+    <script src="js/tracker.js?v=2"></script>
+    <script src="js/user-nav.js?v=54"></script>
+    <script src="js/main.js?v=2"></script>
+    <script src="js/history.js?v=8"></script>
+</body>
+</html>

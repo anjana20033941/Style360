@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Style360 — Horizontal Progress Tracker Component (tracker.css)
+   Clean horizontal stage progression for bespoke custom outfit requests
+   ========================================================================== */
+
+.tracker-container {
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    border-top: 1px solid #F1F5F9;
+    margin-top: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tracker-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #1E1B4B;
+    margin-bottom: 1.75rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tracker-steps,
+.tracker-steps-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    position: relative !important;
+    max-width: 680px;
+    margin: 1.5rem auto 1rem auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+.tracker-line-track {
+    position: absolute;
+    top: 21px;
+    left: 60px;
+    right: 60px;
+    height: 4px;
+    background: #E2E8F0;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.tracker-line-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7C3AED, #10B981);
+    transition: width 0.4s ease;
+    border-radius: 4px;
+}
+
+.tracker-step {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    position: relative !important;
+    z-index: 2;
+    text-align: center;
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.step-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2.5px solid #CBD5E1;
+    color: #94A3B8;
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.tracker-step.completed .step-circle {
+    background: #10B981;
+    border-color: #10B981;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.tracker-step.active .step-circle {
+    background: #7C3AED;
+    border-color: #7C3AED;
+    color: #FFFFFF;
+    box-shadow: 0 0 0 5px #EDE9FE;
+    animation: pulseTrackerCircle 2s infinite;
+}
+
+@keyframes pulseTrackerCircle {
+    0%, 100% { box-shadow: 0 0 0 4px #EDE9FE; }
+    50% { box-shadow: 0 0 0 9px rgba(124, 58, 237, 0.22); }
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748B;
+    margin-bottom: 3px;
+    white-space: nowrap;
+}
+
+.tracker-step.active .step-label {
+    color: #7C3AED;
+    font-weight: 800;
+}
+
+.tracker-step.completed .step-label {
+    color: #059669;
+    font-weight: 800;
+}
+
+.step-desc {
+    font-size: 0.72rem;
+    color: #94A3B8;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .tracker-steps,
+    .tracker-steps-wrap {
+        max-width: 100%;
+    }
+    .tracker-step {
+        width: 100px;
+    }
+    .tracker-line-track {
+        left: 50px;
+        right: 50px;
+    }
+    .step-label {
+        font-size: 0.75rem;
+    }
+    .step-desc {
+        display: none;
+    }
+}

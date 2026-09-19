@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile — Style360 AI Virtual Try-On</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css?v=22" />
+    <link rel="stylesheet" href="css/home.css?v=9" />
+
+    <script>
+        (function () {
+            try {
+                var raw = localStorage.getItem('style360_user');
+                var u = raw ? JSON.parse(raw) : null;
+                if (!u || (!u.id && !u.email)) {
+                    window.location.replace('login.html?redirect=profile');
+                }
+            } catch (e) {
+                window.location.replace('login.html?redirect=profile');
+            }
+        })();
+    </script>
+
+    <style>
+        body {
+            background-color: #F8F6FF;
+            background-image: 
+                radial-gradient(ellipse at 10% 40%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 20%, rgba(236, 72, 153, 0.06) 0%, transparent 45%);
+            min-height: 100vh;
+            color: #1E1B4B;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .profile-hero-section {
+            padding: 40px 24px 60px 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .profile-card-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar-box {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+            border: 4px solid #fff;
+        }
+
+        .profile-title-area h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0 0 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-title-area p {
+            color: #64748B;
+            font-size: 0.92rem;
+            margin: 0;
+        }
+
+        .verified-badge {
+            background: #DCFCE7;
+            color: #16A34A;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 2-Column Content Grid */
+        .profile-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .profile-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .details-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.04);
+        }
+
+        .details-card h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 0.85rem;
+            border-bottom: 1.5px solid #F1F5F9;
+        }
+
+        /* Edit Form Controls */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+
+        .input-wrap-profile {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-wrap-profile label {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .profile-input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid #E2E8F0;
+            background: #FAFAFC;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #1E1B4B;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        .profile-input-field:focus {
+            outline: none;
+            border-color: #7C3AED;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+        }
+
+        .btn-save-profile {
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%);
+            color: #FFFFFF;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.28);
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-save-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.38);
+        }
+
+        /* Sidebar Navigation Cards */
+        .side-nav-card {
+            background: #FFFFFF;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            margin-bottom: 1.25rem;
+        }
+
+        .side-nav-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            color: #1E1B4B;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .side-nav-link-btn:hover {
+            background: #F5F3FF;
+            border-color: #A78BFA;
+            color: #7C3AED;
+            transform: translateX(3px);
+        }
+
+        .profile-msg-toast {
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .profile-msg-toast.success {
+            background: #DCFCE7;
+            color: #15803D;
+            border: 1px solid #86EFAC;
+        }
+
+        .profile-msg-toast.error {
+            background: #FEE2E2;
+            color: #B91C1C;
+            border: 1px solid #FCA5A5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with User Avatar Dropdown -->
+    <header class="app-header" id="main-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" id="nav-home-logo" style="display: flex; align-items: center;">
+                <img src="images/user_logo.jpeg" alt="Style360 Logo" style="height: 105px; max-height: 115px; width: auto; object-fit: contain; display: block;" />
+            </a>
+
+            <nav class="main-nav" id="main-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#tryon" class="nav-link">Try On</a>
+                <a href="my-3d-models.html" class="nav-link nav-link-studio" id="nav-studio-link">My 3D Models</a>
+            </nav>
+
+            <div class="header-actions">
+                <!-- Auth Action Buttons (Visible for Guests) -->
+                <div class="header-auth-buttons" id="header-auth-btns" style="display:none;">
+                    <a href="auth.html?mode=signin" class="btn-header-signin" id="btn-header-signin">Sign In</a>
+                    <a href="auth.html?mode=signup" class="btn-header-signup" id="btn-header-signup">Sign Up</a>
+                </div>
+
+                <!-- Modern User Profile Avatar & Floating Dropdown Menu (Visible for Authenticated Users) -->
+                <div class="user-menu-container" id="user-menu-wrap" style="display:none;">
+                    <button class="user-avatar-btn" id="btn-user-avatar" aria-label="User Account Menu" title="User Menu">
+                        <span class="user-avatar-initials" id="header-avatar-initials">👤</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <div class="dropdown-user-header">
+                            <div class="dropdown-avatar-circle" id="drop-avatar-circle">👤</div>
+                            <div class="dropdown-user-info">
+                                <h4 id="drop-user-name">Guest User</h4>
+                                <p id="drop-user-email">Sign in to sync your looks</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item active" style="background:#F5F3FF; color:#7C3AED;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span>Edit Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>My Try-On History</span>
+                        </a>
+                        <a href="my-3d-models.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                            <span>My 3D Models</span>
+                        </a>
+                        <a href="admin.html" class="dropdown-item" id="drop-admin-link" style="display:none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Admin Console</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item signout-item" id="btn-dropdown-signout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Profile Content -->
+    <main class="profile-hero-section">
+
+        <!-- Top Profile Banner -->
+        <div class="profile-card-header">
+            <div class="profile-avatar-box">
+                <div class="avatar-circle" id="profile-avatar-initials">👤</div>
+                <div class="profile-title-area">
+                    <h1 id="profile-full-name">
+                        <span>Loading Profile...</span>
+                    </h1>
+                    <p id="profile-user-email"></p>
+                </div>
+            </div>
+
+            <div class="profile-header-actions">
+                <button class="btn-hero-primary" onclick="window.Style360Auth?.signOut()" style="background:#FEF2F2; color:#DC2626; border:1px solid #FCA5A5; padding:9px 20px; font-size:0.86rem; border-radius:50px; font-weight:700; cursor:pointer;">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <div class="profile-layout-grid">
+
+            <!-- Left: Edit Profile Form -->
+            <div class="details-card">
+                <h2>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Edit Personal Information
+                </h2>
+
+                <form id="form-edit-profile" class="profile-form">
+                    <div class="form-row-2">
+                        <div class="input-wrap-profile">
+                            <label for="prof-first-name">First Name</label>
+                            <input type="text" id="prof-first-name" class="profile-input-field" placeholder="First Name" required />
+                        </div>
+                        <div class="input-wrap-profile">
+                            <label for="prof-last-name">Last Name</label>
+                            <input type="text" id="prof-last-name" class="profile-input-field" placeholder="Last Name" required />
+                        </div>
+                    </div>
+
+                    <div class="input-wrap-profile">
+                        <label for="prof-email">Email Address</label>
+                        <input type="email" id="prof-email" class="profile-input-field" placeholder="name@example.com" required />
+                    </div>
+
+                    <div class="input-wrap-profile">
+                        <label for="prof-password">Change Password <span style="font-weight:400; color:#94A3B8;">(Leave blank to keep unchanged)</span></label>
+                        <input type="password" id="prof-password" class="profile-input-field" placeholder="Enter new password" autocomplete="new-password" />
+                    </div>
+
+                    <button type="submit" class="btn-save-profile" id="btn-save-profile">
+                        💾 Update Profile
+                    </button>
+
+                    <div id="profile-alert-box" class="profile-msg-toast"></div>
+                </form>
+            </div>
+
+            <!-- Right: Shortcuts & Account Overview -->
+            <div class="profile-sidebar-wrap">
+                <div class="side-nav-card">
+                    <h3 style="font-size: 1rem; font-weight: 800; color:#1E1B4B; margin:0 0 6px 0;">Virtual Style Hub</h3>
+                    <p style="font-size:0.8rem; color:#64748B; margin:0 0 10px 0;">Quick links to your saved try-on looks and 3D files.</p>
+
+                    <a href="history.html" class="side-nav-link-btn">
+                        <span>📷 My Try-On History</span>
+                        <span>→</span>
+                    </a>
+                    <a href="my-3d-models.html" class="side-nav-link-btn">
+                        <span>🪐 My 3D Models</span>
+                        <span>→</span>
+                    </a>
+                    <a href="index.html#tryon" class="side-nav-link-btn" style="background:#F5F3FF; color:#7C3AED; border-color:#DDD6FE;">
+                        <span>⚡ Launch Studio</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <div class="side-nav-card">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color:#1E1B4B; margin:0 0 6px 0;">Account Status</h3>
+                    <div style="font-size:0.8rem; color:#475569; display:flex; flex-direction:column; gap:6px;">
+                        <div>Role: <strong id="user-role-text" style="color:#7C3AED;">--</strong></div>
+                        <div>Database: <strong>style360_v2.users</strong></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/user-nav.js?v=52"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var user = window.Style360Auth ? window.Style360Auth.getCurrentUser() : null;
+            if (!user || (!user.id && !user.email)) {
+                window.location.replace('login.html?redirect=profile');
+                return;
+            }
+
+            var fullName = ((user.first_name || '') + ' ' + (user.last_name || '')).trim();
+            if (!fullName) fullName = user.username || user.email || 'User Profile';
+
+            var initials = (user.first_name ? user.first_name.charAt(0) : (user.email ? user.email.charAt(0) : 'U')).toUpperCase();
+            if (user.last_name) initials += user.last_name.charAt(0).toUpperCase();
+
+            var avatarInitials = document.getElementById('profile-avatar-initials');
+            var nameEl = document.getElementById('profile-full-name');
+            var emailEl = document.getElementById('profile-user-email');
+            var roleText = document.getElementById('user-role-text');
+
+            if (avatarInitials) avatarInitials.textContent = initials;
+            if (nameEl) {
+                nameEl.innerHTML = '<span>' + fullName + '</span> <span class="verified-badge">✓ Verified Account</span>';
+            }
+            if (emailEl) emailEl.textContent = user.email || '';
+            if (roleText) roleText.textContent = user.role ? (user.role.toUpperCase()) : 'USER';
+
+            var inputFn = document.getElementById('prof-first-name');
+            var inputLn = document.getElementById('prof-last-name');
+            var inputEm = document.getElementById('prof-email');
+            var inputPw = document.getElementById('prof-password');
+            var alertBox = document.getElementById('profile-alert-box');
+
+            if (inputFn) inputFn.value = user.first_name || '';
+            if (inputLn) inputLn.value = user.last_name || '';
+            if (inputEm) inputEm.value = user.email || '';
+
+            var form = document.getElementById('form-edit-profile');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    alertBox.style.display = 'none';
+
+                    var payload = {
+                        action: 'update_profile',
+                        user_id: user.id || 1,
+                        first_name: inputFn.value.trim(),
+                        last_name: inputLn.value.trim(),
+                        email: inputEm.value.trim(),
+                        new_password: inputPw.value.trim()
+                    };
+
+                    var apiUrl = (window.location.pathname.indexOf('/style360') === 0) ? '/style360/backend/auth.php' : '/backend/auth.php';
+
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data && data.status === 'success') {
+                            alertBox.textContent = '✓ ' + data.message;
+                            alertBox.className = 'profile-msg-toast success';
+                            alertBox.style.display = 'block';
+
+                            // Update localStorage user
+                            user.first_name = payload.first_name;
+                            user.last_name  = payload.last_name;
+                            user.email      = payload.email;
+                            localStorage.setItem('style360_user', JSON.stringify(user));
+
+                            // Refresh Nav
+                            if (window.Style360Auth) {
+                                window.Style360Auth.initUserNav();
+                            }
+                        } else {
+                            alertBox.textContent = '⚠️ ' + (data.message || 'Update failed.');
+                            alertBox.className = 'profile-msg-toast error';
+                            alertBox.style.display = 'block';
+                        }
+                    })
+                    .catch(function () {
+                        alertBox.textContent = '⚠️ Network error occurred.';
+                        alertBox.className = 'profile-msg-toast error';
+                        alertBox.style.display = 'block';
+                    });
+                });
+            }
+        });
+    </script>
+    <script src="js/auth.js?v=1"></script>
+    <script src="js/user-nav.js?v=53"></script>
+    <script src="js/main.js?v=1"></script>
+</body>
+</html>

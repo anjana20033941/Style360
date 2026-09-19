@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Style360 — Virtual Try-On Studio</title>
+    <script>
+        (function () {
+            try {
+                var rawUser = localStorage.getItem('style360_user');
+                var user = rawUser ? JSON.parse(rawUser) : null;
+                if (!user || (!user.id && !user.email)) {
+                    // Unauthenticated guest: redirect to login with query param
+                    window.location.replace('login.html?redirect=try-on');
+                } else {
+                    // Authenticated: route directly to the Try-On Studio section
+                    window.location.replace('index.html#tryon');
+                }
+            } catch (e) {
+                window.location.replace('login.html?redirect=try-on');
+            }
+        })();
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background: #F8F6FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #4C1D95;
+        }
+        .loading-box {
+            text-align: center;
+            background: #FFFFFF;
+            padding: 36px 48px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.08);
+            border: 1px solid #EDE9FE;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #EDE9FE;
+            border-top-color: #7C3AED;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h3 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+            color: #1E1B4B;
+        }
+        p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #6B7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <h3>Accessing Virtual Try-On...</h3>
+        <p>Verifying your session...</p>
+    </div>
+</body>
+</html>

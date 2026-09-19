@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Style360 — AI Virtual Try-On | Virtual Fitting Reimagined</title>
+    <meta name="description" content="Try any outfit virtually on yourself with Style360 AI. Upload your photo, choose a garment, and see the magic instantly. Realistic results, all body types, safe and secure." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="css/style.css?v=50" />
+    <link rel="stylesheet" href="css/home.css?v=67" />
+    <link rel="stylesheet" href="css/chatbot.css?v=50" />
+    <link rel="stylesheet" href="css/index.css?v=2" />
+</head>
+<body>
+
+<!-- ================================================================== -->
+<!--  HEADER                                                             -->
+<!-- ================================================================== -->
+<header class="app-header" id="main-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo" id="nav-home-logo" style="display: flex; align-items: center;">
+            <img src="images/user_logo.jpeg" alt="Style360 Logo" style="height: 105px; max-height: 115px; width: auto; object-fit: contain; display: block;" />
+        </a>
+
+        <div class="header-actions">
+            <!-- User Bell Notification Dropdown -->
+            <div class="notification-menu-container" id="notification-menu-wrap" style="display:none;">
+                <button type="button" class="notification-bell-btn" id="notification-bell" data-alias-id="btn-notification-bell" aria-label="Notifications" title="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge" id="notification-badge" style="display:none;">0</span>
+                </button>
+                <div class="notification-dropdown-menu" id="notification-dropdown" data-alias-id="notification-dropdown-menu">
+                    <div class="notif-dropdown-head">
+                        <h4>🔔 Notifications</h4>
+                        <button type="button" class="btn-mark-all-read" id="btn-mark-all-read">Mark all read</button>
+                    </div>
+                    <div class="notif-list-container" id="notif-list-container">
+                        <div class="notif-empty-state">No new notifications</div>
+                    </div>
+                    <div class="notif-dropdown-foot">
+                        <a href="history.html?tab=custom-requests" class="notif-view-all-link">View Custom Requests Tracker &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Action Buttons (Visible for Guests) -->
+            <div class="header-auth-buttons" id="header-auth-btns">
+                <a href="auth.html?mode=signin" class="btn-header-signin" id="btn-header-signin">Sign In</a>
+                <a href="auth.html?mode=signup" class="btn-header-signup" id="btn-header-signup">Sign Up</a>
+            </div>
+
+            <!-- Modern User Profile Avatar & Floating Dropdown Menu (Visible for Authenticated Users) -->
+            <div class="user-menu-container" id="user-menu-wrap" style="display:none;">
+                <button class="user-avatar-btn" id="btn-user-avatar" aria-label="User Account Menu" title="User Menu">
+                    <span class="user-avatar-initials" id="header-avatar-initials">👤</span>
+                </button>
+                <div class="user-dropdown-menu" id="user-dropdown-menu">
+                    <div class="dropdown-user-header">
+                        <div class="dropdown-avatar-circle" id="drop-avatar-circle">👤</div>
+                        <div class="dropdown-user-info">
+                            <h4 id="drop-user-name">Guest User</h4>
+                            <p id="drop-user-email">Sign in to sync your looks</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>Edit Profile</span>
+                    </a>
+                    <a href="history.html" class="dropdown-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>My Try-On History</span>
+                    </a>
+                    <a href="my-3d-models.html" class="dropdown-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        <span>My 3D Models</span>
+                    </a>
+                    <a href="admin.html" class="dropdown-item" id="drop-admin-link" style="display:none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Admin Console</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button type="button" class="dropdown-item signout-item" id="btn-dropdown-signout">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ================================================================== -->
+<!--  HOME PAGE                                                          -->
+<!-- ================================================================== -->
+<main id="home-page">
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    AI POWERED VIRTUAL TRY-ON
+                </div>
+                <h1 class="hero-title">
+                    See It. <span class="hero-accent">Love It.</span><br/>Own It.
+                </h1>
+                <p class="hero-subtitle">
+                    Try any outfit virtually on yourself.<br/>
+                    Find the perfect style for every you.
+                </p>
+                <div class="hero-cta-group">
+                    <button class="btn-hero-primary" id="btn-get-started">
+                        Try On
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                    <button class="btn-hero-secondary" id="btn-shop-now">
+                        Explore Collections
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+                <div class="hero-trust-badges">
+                    <div class="trust-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Realistic Results
+                    </div>
+                    <div class="trust-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Instant Preview
+                    </div>
+                    <div class="trust-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        All Body Types
+                    </div>
+                    <div class="trust-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Safe & Secure
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-center">
+                <div class="hero-image-wrap">
+                    <div class="hero-glow"></div>
+                    <img src="images/hero_couple.png" alt="Style360 AI Virtual Try-On" class="hero-image" id="hero-img" />
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="try-your-look-card">
+                    <h3 class="card-title">Try Your Look</h3>
+                    <div class="try-steps">
+                        <div class="try-step">
+                            <div class="try-step-icon upload-icon-color">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                            </div>
+                            <span>Upload Your Photo</span>
+                        </div>
+                        <div class="try-step">
+                            <div class="try-step-icon outfit-icon-color">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+                            </div>
+                            <span>Choose Outfit</span>
+                        </div>
+                        <div class="try-step">
+                            <div class="try-step-icon magic-icon-color">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            </div>
+                            <span>See the Magic</span>
+                        </div>
+                    </div>
+                    <div class="popular-looks">
+                        <p class="popular-label">Popular Looks</p>
+                        <div class="popular-thumbs">
+                            <img src="images/cat_men_formal.png" alt="Look 1" class="thumb-img"/>
+                            <img src="images/cat_women_dress.png" alt="Look 2" class="thumb-img"/>
+                            <img src="images/cat_men_casual.png" alt="Look 3" class="thumb-img"/>
+                            <img src="images/cat_women_tops.png" alt="Look 4" class="thumb-img"/>
+                        </div>
+                        <div class="thumb-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="hiw-section" id="how-it-works">
+        <div class="section-inner">
+            <p class="section-label">HOW IT WORKS</p>
+            <h2 class="section-title">Your Perfect Look in 3 Simple Steps</h2>
+            <div class="hiw-steps">
+                <div class="hiw-step">
+                    <div class="hiw-icon-wrap green">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                    </div>
+                    <div class="hiw-step-num">01. Upload Photo</div>
+                    <p class="hiw-step-desc">Upload a full-body photo or use our model.</p>
+                    <div class="hiw-arrow">
+                        <svg width="60" height="12" viewBox="0 0 60 12" fill="none"><path d="M0 6 Q30 0 54 6 L50 2 M54 6 L50 10" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/></svg>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon-wrap blue">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+                    </div>
+                    <div class="hiw-step-num">02. Choose Outfit</div>
+                    <p class="hiw-step-desc">Browse and select from our wide range of styles.</p>
+                    <div class="hiw-arrow">
+                        <svg width="60" height="12" viewBox="0 0 60 12" fill="none"><path d="M0 6 Q30 0 54 6 L50 2 M54 6 L50 10" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/></svg>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-icon-wrap orange">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div class="hiw-step-num">03. See Results</div>
+                    <p class="hiw-step-desc">Get a realistic preview of your virtual try-on.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOP BY CATEGORY -->
+    <section class="categories-section" id="categories">
+        <div class="section-inner">
+            <p class="section-label">TRY ON THIS CATEGORY</p>
+            <div class="categories-grid">
+                <!-- Exclusive Collection Banner -->
+                <div class="cat-card cat-card-wedding-banner" id="cat-wedding-banner">
+                    <div class="wedding-banner-inner">
+                        <div class="wedding-banner-icon">✨</div>
+                        <p class="wedding-banner-label">EXCLUSIVE COLLECTION</p>
+                        <h3 class="wedding-banner-title">Formal &amp; Premium<br/>Wear</h3>
+                        <p class="wedding-banner-sub">Elevated Styles for Men &amp; Women</p>
+                    </div>
+                </div>
+
+                <!-- Women: Evening Gowns & Dresses -->
+                <div class="cat-card" id="cat-wedding-women">
+                    <img src="images/cat_women_evening.jpg" alt="Women Evening Gowns &amp; Dresses" class="cat-img"/>
+                    <div class="cat-overlay">
+                        <div class="cat-info">
+                            <p class="cat-name">Women</p>
+                            <p class="cat-sub">Evening Gowns &amp; Dresses</p>
+                            <a href="#" class="cat-explore">Try On →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Men: Suits & Blazers -->
+                <div class="cat-card" id="cat-wedding-men">
+                    <img src="images/cat_men_formal.png" alt="Men Suits &amp; Blazers" class="cat-img"/>
+                    <div class="cat-overlay">
+                        <div class="cat-info">
+                            <p class="cat-name">Men</p>
+                            <p class="cat-sub">Suits &amp; Blazers</p>
+                            <a href="#" class="cat-explore">Try On →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+        <div class="section-inner">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon ai-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01"/></svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>AI-Powered Accuracy</h4>
+                        <p>Advanced AI for realistic fitting and perfect results.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon heart-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>Save Your Looks</h4>
+                        <p>Save & share your favorite outfits with your friends.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon shop-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>Shop With Confidence</h4>
+                        <p>Find the perfect fit before you buy.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon shield-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="feature-text">
+                        <h4>Privacy First</h4>
+                        <p>Your data is protected and secure.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ================================================================== -->
+<!--  CATEGORY BROWSING SECTION                                          -->
+<!-- ================================================================== -->
+<section id="category-section" style="display:none;">
+    <!-- Top Filter Switcher Pills -->
+    <div class="cat-filter-switcher-wrap">
+        <button class="cat-switch-pill active" id="btn-switch-women" type="button">WOMEN'S COLLECTION</button>
+        <button class="cat-switch-pill" id="btn-switch-men" type="button">MEN'S SELECTION</button>
+    </div>
+
+    <div class="cat-browse-header">
+        <div class="cat-browse-header-inner">
+            <button class="cat-back-btn" id="btn-cat-back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+                Back to Home
+            </button>
+            <div class="cat-browse-title-wrap">
+                <span class="cat-browse-badge" id="cat-browse-badge">EVENING GOWNS &amp; DRESSES - WOMEN</span>
+                <h2 class="cat-browse-title" id="cat-browse-title">WOMEN'S COLLECTION</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Horizontal Category Filter Tabs Bar -->
+    <div class="collection-filter-tabs-container">
+        <div class="collection-filter-tabs-bar" id="collection-filter-tabs">
+            <button type="button" class="col-filter-tab active" data-filter="all">All</button>
+            <button type="button" class="col-filter-tab" data-filter="western">Western</button>
+            <button type="button" class="col-filter-tab" data-filter="bridal">Bridal &amp; Formal</button>
+            <button type="button" class="col-filter-tab" data-filter="casual">Casual</button>
+            <button type="button" class="col-filter-tab" data-filter="suits">Suits &amp; Blazers</button>
+        </div>
+    </div>
+
+    <div class="cat-browse-body">
+        <p class="cat-browse-instruction">Select a garment below and click <strong>Try On</strong> to see it on you.</p>
+        <div class="garment-grid" id="garment-grid">
+            <!-- Garment cards injected by home.js -->
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- ================================================================== -->
+<!-- ================================================================== -->
+<!--  TRY ON STUDIO SECTION                                             -->
+<!-- ================================================================== -->
+<section id="studio-section" class="studio-section" style="display:none;">
+    <!-- Top Header Bar -->
+    <div class="studio-header-bar">
+        <div style="flex:1;"></div>
+        <button class="studio-close-btn" id="btn-close-studio" aria-label="Close Studio" title="Back to Home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+
+    <!-- Main Upper Studio Layout Grid (3-Column Layout Matching Reference Mockup) -->
+    <div class="studio-main-wrapper">
+        <div class="studio-mockup-grid">
+
+            <!-- LEFT COLUMN: Create Model Card + Angle Posture Card -->
+            <div class="studio-grid-left">
+                <!-- Top Card: Create your 3D model -->
+                <div class="studio-card main-create-card">
+                    <h2 class="card-title-serif">Create your<br/>3D model ✨</h2>
+                    <p class="card-subtitle-text">Your 3D model helps us render clothes on you with perfect fit and realism.</p>
+
+                    <!-- Upload Action Box -->
+                    <div class="upload-action-box" id="step-1-card">
+                        <div class="upload-box-inner">
+                            <div class="purple-icon-box">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"/></svg>
+                            </div>
+                            <div class="upload-box-info">
+                                <h4 class="box-head-title">Upload Photos</h4>
+                                <p class="box-sub-desc">Upload a photo from front angle. We'll build the model.</p>
+                            </div>
+                            <label for="person-upload" class="purple-arrow-btn" title="Choose Photo">
+                                →
+                            </label>
+                            <input type="file" id="person-upload" accept="image/*" hidden />
+                        </div>
+                    </div>
+
+                    <!-- Hidden preview area -->
+                    <div class="preview-thumb-container" id="person-upload-zone" style="margin-top: 12px; display: none;">
+                        <label for="person-upload" id="person-upload-label" style="cursor:pointer;">
+                            <img id="person-preview" class="upload-preview-img" style="display:none; max-height: 180px; border-radius: 12px; border: 2px solid #ddd6fe;" alt="Uploaded Photo" />
+                        </label>
+                    </div>
+
+                    <!-- Gender Selection -->
+                    <div class="gender-selection-box" style="margin-top: 14px; margin-bottom: 14px;">
+                        <label class="gender-box-label" style="display: block; font-size: 0.85rem; font-weight: 600; color: #4c1d95; margin-bottom: 6px;">
+                            👤 Select Avatar Gender
+                        </label>
+                        <div class="gender-options-group" style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-gender-opt active" data-gender="Male" id="btn-gender-male" style="flex: 1; padding: 9px 12px; border-radius: 10px; border: 1.5px solid #7c3aed; background: #f3e8ff; color: #6b21a8; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+                                👨 Male
+                            </button>
+                            <button type="button" class="btn-gender-opt" data-gender="Female" id="btn-gender-female" style="flex: 1; padding: 9px 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #ffffff; color: #475569; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                                👩 Female
+                            </button>
+                        </div>
+                        <input type="hidden" id="selected-avatar-gender" value="Male" />
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons-stack">
+                        <button id="btn-camera" class="btn-outline-white" type="button">
+                            📷 Capture with Camera
+                        </button>
+                        <button id="btn-generate-3d" class="btn-gradient-purple" type="button" disabled>
+                            ⚡ Generate 3D Avatar (~15s)
+                        </button>
+                    </div>
+
+                    <!-- Step 2 Container (Garment Selection & Gemini Assistant) -->
+                    <div id="step-2-container" style="display:none; margin-top: 1.5rem;">
+                        <div class="studio-control-card">
+                            <h3 class="control-title"><span class="step-badge">2</span> Add Garment</h3>
+                            <p class="control-desc">Paste a product URL or upload a garment image.</p>
+                            <input type="text" id="garment-url" class="studio-text-input" placeholder="https://example.com/product-page" />
+                            <div class="or-divider"><span>OR</span></div>
+                            <label class="studio-upload-area" for="garment-upload">
+                                <input type="file" id="garment-upload" accept="image/*" hidden />
+                                <div class="upload-placeholder">
+                                    <span class="upload-icon">👕</span>
+                                    <span>Click to upload garment</span>
+                                </div>
+                                <img id="garment-preview" class="upload-preview" style="display:none;" alt="Garment preview" />
+                            </label>
+                        </div>
+                        <button id="btn-generate" class="btn-studio-primary btn-generate-tryon" type="button">
+                            ✨ Generate Try-On
+                        </button>
+                        <div id="pipeline-progress" class="pipeline-progress-box" style="display:none;">
+                            <div id="step-1" class="pipeline-step pending"><span class="step-icon">⬜</span> <span class="step-label">3D Avatar Generation</span></div>
+                            <div id="step-2" class="pipeline-step pending"><span class="step-icon">⬜</span> <span class="step-label">URL Scraping</span></div>
+                            <div id="step-3" class="pipeline-step pending"><span class="step-icon">⬜</span> <span class="step-label">Gemini Vision Analysis</span></div>
+                            <div id="step-4" class="pipeline-step pending"><span class="step-icon">⬜</span> <span class="step-label">Virtual Try-On</span></div>
+                        </div>
+                        <div id="analysis-results" class="analysis-results" style="display:none;"></div>
+                        <div id="status-message" class="status-message" style="display:none;"></div>
+                        <div class="studio-control-card chat-card" style="margin-top: 1rem;">
+                            <h3 class="control-title">💬 Gemini Styling Assistant</h3>
+                            <div id="gemini-chat-box" class="chat-box">
+                                <div class="chat-msg ai"><strong>Style360 AI:</strong> Hi! Ask me anything about your outfit!</div>
+                            </div>
+                            <div class="chat-input-row">
+                                <input type="text" id="gemini-input" class="studio-text-input chat-input" placeholder="Ask about styling..." />
+                                <button id="btn-gemini-send" class="btn-studio-primary btn-sm" type="button">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Pill Badge -->
+                    <div class="privacy-pill-badge">
+                        <span class="shield-icon">🛡️</span>
+                        <span><strong>Your data is private and secure.</strong> We never share your scans or photos.</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Card: 360° Angle Posture Guide Image -->
+                <div class="angle-posture-card">
+                    <img src="images/angle.jpeg" alt="360 Degree Body Angle Guide" class="angle-img-full" />
+                </div>
+            </div>
+
+            <!-- CENTER COLUMN: Futuristic 3D Scanner Stage Pod -->
+            <div class="studio-grid-center">
+                <div class="scanner-pod-stage">
+                    <!-- Floating Status Card -->
+                    <div class="pod-status-card">
+                        <div class="status-head">
+                            <span class="pulse-wave-icon">⚡</span>
+                            <span id="pod-status-title" class="status-title-text">Scanning</span>
+                        </div>
+                        <div class="status-checklist">
+                            <div class="check-item active" id="chk-scanning"><span class="chk-dot"></span> Scanning</div>
+                            <div class="check-item" id="chk-processing"><span class="chk-dot"></span> Processing</div>
+                            <div class="check-item" id="chk-done"><span class="chk-dot"></span> Almost Done</div>
+                        </div>
+                    </div>
+
+                    <!-- Glowing Glass Pod Wrapper -->
+                    <div class="glass-pod-wrapper">
+                        <!-- 3D Canvas Container -->
+                        <div class="pod-canvas-container">
+                            <canvas id="studio-scanner-canvas"></canvas>
+                            <div id="loading-overlay" class="loading-overlay" style="display:none;">
+                                <div class="spinner"></div>
+                                <p id="loading-text" class="loading-text">Processing 3D Model...</p>
+                            </div>
+                        </div>
+
+                        <!-- Illuminated Base Platform -->
+                        <div class="pod-base-platform">
+                            <div class="base-ring-outer"></div>
+                            <div class="base-ring-inner"></div>
+                            <div class="base-glowing-floor"></div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Controls Bar -->
+                    <div class="pod-viewer-controls">
+                        <button id="btn-rotate-upright" class="pod-control-btn" type="button">⤢ Stand Upright</button>
+                        <button id="btn-reset-view" class="pod-control-btn" type="button">🎯 Reset View</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Why 3D Model? & Tips For Best Results -->
+            <div class="studio-grid-right">
+                <!-- Why 3D Model Card -->
+                <div class="studio-card why-model-card">
+                    <div class="sparkle-icon">✨</div>
+                    <h3 class="card-title-serif">Why 3D model?</h3>
+                    <ul class="why-benefits-list">
+                        <li><span class="check-mark">✓</span> Perfect fit prediction</li>
+                        <li><span class="check-mark">✓</span> Realistic try-on experience</li>
+                        <li><span class="check-mark">✓</span> Works for any outfit</li>
+                        <li><span class="check-mark">✓</span> Saves your preferences</li>
+                    </ul>
+                </div>
+
+                <!-- Tips for Best Results Card -->
+                <div class="studio-card tips-guide-card">
+                    <p class="tips-header-tag">TIPS FOR BEST RESULTS</p>
+                    <div class="tip-guide-item">
+                        <div class="tip-icon-box">👔</div>
+                        <div class="tip-text-body">
+                            <h5>Wear fitted clothes</h5>
+                            <p>Fitted clothes help capture your body shape accurately.</p>
+                        </div>
+                    </div>
+                    <div class="tip-guide-item">
+                        <div class="tip-icon-box">☀️</div>
+                        <div class="tip-text-body">
+                            <h5>Good lighting</h5>
+                            <p>Bright, even lighting ensures better scan quality.</p>
+                        </div>
+                    </div>
+                    <div class="tip-guide-item">
+                        <div class="tip-icon-box">🧍</div>
+                        <div class="tip-text-body">
+                            <h5>Stand naturally</h5>
+                            <p>Relax and stand naturally for the most accurate model.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- ================================================================== -->
+<!--  DEDICATED 4-STEP TRY ON STUDIO                                     -->
+<!-- ================================================================== -->
+<section id="tryon-dedicated-section" class="tryon-dedicated-section" style="display:none;">
+    <div class="tryon-main-wrapper">
+        <div class="tryon-3col-container">
+
+            <!-- COLUMN 1 (LEFT): Step 1 & Step 2 Controls -->
+            <div class="tryon-col-left left-panel controls-sidebar step-container" id="tryon-col-left">
+
+                <!-- STEP 1 CARD: Photo Upload & Gender Selection -->
+                <div class="tryon-modern-card" id="card-step-1">
+                    <div class="card-head">
+                        <div class="step-badge-num">1</div>
+                        <div class="card-head-text">
+                            <h3 class="card-title" id="tryon-step1-title">Step 1: Upload Photo</h3>
+                            <p class="card-subtitle" id="tryon-step1-subtitle">Upload your full-length photo to begin</p>
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload Dropzone -->
+                    <div class="photo-upload-zone" id="tryon-photo-dropzone">
+                        <input type="file" id="tryon-user-upload-input" accept="image/*" hidden />
+                        <div class="upload-dropzone-content" id="tryon-user-empty-state">
+                            <div class="upload-icon-circle">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            </div>
+                            <p class="upload-prompt-main" id="tryon-upload-prompt-main"><strong>Click to upload photo</strong></p>
+                            <p class="upload-prompt-sub" id="tryon-upload-prompt-sub">Supports PNG, JPG, WebP</p>
+                        </div>
+                        <div class="upload-preview-wrap" id="tryon-user-preview-wrap" style="display:none;">
+                            <img id="tryon-user-preview-img" src="" alt="User photo preview" />
+                            <button type="button" class="btn-remove-preview" id="btn-remove-user-photo" title="Remove photo">✕</button>
+                        </div>
+                        <!-- Scanning / Verification Overlay -->
+                        <div class="photo-scan-loading" id="tryon-photo-scan-loading" style="display:none;">
+                            <div class="photo-scan-spinner"></div>
+                            <span class="photo-scan-text" id="tryon-photo-scan-text">Analyzing photo compatibility...</span>
+                        </div>
+                    </div>
+
+                    <!-- Gender Selection (Male / Female) -->
+                    <div class="gender-pill-bar" id="tryon-gender-pill-bar">
+                        <div class="gender-btn-group" id="tryon-gender-btn-group">
+                            <button type="button" class="btn-gender-pill active" data-gender="Male" id="tryon-gender-male">
+                                👨 Male Model
+                            </button>
+                            <button type="button" class="btn-gender-pill" data-gender="Female" id="tryon-gender-female">
+                                👩 Female Model
+                            </button>
+                        </div>
+                        <div class="gender-locked-pill" id="tryon-gender-locked-pill" style="display:none;">
+                            <span class="locked-icon">🔒</span>
+                            <div class="locked-body">
+                                <span class="locked-title" id="tryon-gender-locked-title">Auto-locked: Men's Model</span>
+                                <span class="locked-sub">Matches selected outfit category</span>
+                            </div>
+                            <button type="button" class="btn-unlock-gender" id="btn-unlock-gender" title="Click to manually choose Male or Female model">Change</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 CARD: Choose Outfit -->
+                <div class="tryon-modern-card" id="card-step-2">
+                    <div class="card-head">
+                        <div class="step-badge-num">2</div>
+                        <div class="card-head-text">
+                            <h3 class="card-title">Step 2: Choose Outfit</h3>
+                            <p class="card-subtitle">Upload your own or browse our collection</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 Garment Verification & Safety Loading Overlay -->
+                    <div class="garment-verify-loading" id="garment-verify-loading" style="display:none;">
+                        <div class="garment-verify-spinner"></div>
+                        <span class="garment-verify-text" id="garment-verify-text">Verifying Image &amp; Safety...</span>
+                    </div>
+
+                    <!-- Upload Custom Garment Dropzone -->
+                    <div class="custom-garment-dropzone" id="garment-upload-dropzone" title="Upload your own garment image">
+                        <input type="file" id="garment-upload-input" accept="image/*" hidden />
+                        <div class="garment-upload-empty-state" id="garment-upload-empty-state">
+                            <div class="upload-icon-circle" style="background:#EFF6FF;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            </div>
+                            <p class="upload-prompt-main" style="font-size:0.8rem;"><strong>Upload Custom Garment</strong></p>
+                            <p class="upload-prompt-sub">PNG, JPG, WebP</p>
+                        </div>
+                        <div class="garment-upload-preview-wrap" id="garment-upload-preview-wrap" style="display:none;">
+                            <img id="garment-upload-preview-img" src="" alt="Custom garment preview" />
+                            <button type="button" class="btn-remove-preview" id="btn-remove-garment-upload" title="Remove custom garment">✕</button>
+                            <span class="custom-garment-badge">Custom</span>
+                        </div>
+                    </div>
+
+                    <!-- Selected Garment Preview Card (from catalog) -->
+                    <div class="selected-outfit-section" id="selected-outfit-section">
+                        <div class="selected-outfit-label-row">
+                            <span class="selected-outfit-label-text">Selected Outfit</span>
+                            <span class="selected-outfit-change-link" id="btn-change-outfit-link">Change ›</span>
+                        </div>
+                        <div class="selected-outfit-preview-card selected-outfit-card" id="selected-outfit-preview-card">
+                            <!-- Populated dynamically by JS -->
+                            <div class="no-outfit-placeholder" id="no-outfit-placeholder">
+                                <p>No outfit selected yet.<br/><span style="font-size:0.72rem;color:#94A3B8;">Browse catalog to pick one.</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Garment Coverage Selector -->
+                    <div class="garment-coverage-section" id="garment-coverage-section">
+                        <div class="coverage-label-row">
+                            <span class="coverage-label-text">Garment Coverage</span>
+                            <span class="coverage-label-hint">How much of the outfit to apply</span>
+                        </div>
+                        <div class="coverage-radio-group" id="garment-coverage-group">
+                            <label class="coverage-radio-option" id="coverage-opt-tops">
+                                <input type="radio" name="garment_coverage" value="tops" id="coverage-tops" checked />
+                                <span class="coverage-option-inner">
+                                    <span class="coverage-icon">👕</span>
+                                    <span class="coverage-option-text">
+                                        <strong>Top Only</strong>
+                                        <small>Shirt, blouse, jacket</small>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="coverage-radio-option" id="coverage-opt-bottoms">
+                                <input type="radio" name="garment_coverage" value="bottoms" id="coverage-bottoms" />
+                                <span class="coverage-option-inner">
+                                    <span class="coverage-icon">👖</span>
+                                    <span class="coverage-option-text">
+                                        <strong>Bottom Only</strong>
+                                        <small>Trousers, skirt, pants</small>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="coverage-radio-option" id="coverage-opt-onepieces">
+                                <input type="radio" name="garment_coverage" value="one-pieces" id="coverage-onepieces" />
+                                <span class="coverage-option-inner">
+                                    <span class="coverage-icon">🤵</span>
+                                    <span class="coverage-option-text">
+                                        <strong>Full Outfit / Both</strong>
+                                        <small>Complete set, suit, dress</small>
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Browse Collection Catalog Button -->
+                    <button type="button" class="btn-browse-catalog browse-catalog-btn" id="btn-browse-collection-catalog">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        Browse Collection Catalog
+                    </button>
+
+                    <!-- Generate 2D Try-On Action Button -->
+                    <div class="tryon-action-card" style="margin-top: 10px;">
+                        <button type="button" class="btn-generate-tryon-main" id="btn-trigger-tryon-2col">
+                            <span class="btn-icon">⚡</span>
+                            <span class="btn-label-text">Generate 2D Try-On</span>
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <!-- COLUMN 2 (CENTER): 3D Studio Stage & Viewport -->
+            <div class="tryon-col-center">
+                <div class="tryon-stage-card">
+
+                    <!-- Stage Header with Mode Tabs Matching media_1787818020840.png -->
+                    <div class="stage-card-header-v3">
+                        <div class="stage-dark-badge" id="stage-preset-badge">✨ 3D NEURAL MESH (360°)</div>
+                        <div class="stage-dark-tab-group" id="stage-view-mode-tabs">
+                            <button type="button" class="stage-dark-tab" data-mode="studio" id="tab-mode-studio">3D Studio</button>
+                            <button type="button" class="stage-dark-tab active" data-mode="mesh" id="tab-mode-mesh">3D Mesh</button>
+                            <button type="button" class="stage-dark-tab" data-mode="texture" id="tab-mode-texture">Texture Map</button>
+                        </div>
+                    </div>
+
+                    <!-- Stage Viewport Container -->
+                    <div class="stage-viewport-area">
+
+                        <!-- Smooth Loading Animation Overlay -->
+                        <div class="stage-loading-overlay" id="stage-loading-overlay" style="display:none;">
+                            <div class="loading-animation-core">
+                                <div class="pulse-ring ring-1"></div>
+                                <div class="pulse-ring ring-2"></div>
+                                <div class="pulse-ring ring-3"></div>
+                                <div class="center-ai-gem" id="loading-gem-icon">✨</div>
+                            </div>
+                            <h3 class="loading-headline" id="stage-loading-title">Neural 2D Try-On Processing...</h3>
+                            <p class="loading-subheadline" id="stage-loading-sub">Synthesizing realistic fabric drape with Fal.ai</p>
+                            <div class="loading-bar-track">
+                                <div class="loading-bar-progress" id="stage-loading-progress-bar"></div>
+                            </div>
+                            <div class="loading-stage-steps">
+                                <span class="step-indicator-pill active" id="pill-step-1">1. Photo Mesh</span>
+                                <span class="step-indicator-pill" id="pill-step-2">2. Garment Drape</span>
+                                <span class="step-indicator-pill" id="pill-step-3">3. Fal.ai VTON</span>
+                            </div>
+                        </div>
+
+                        <!-- Initial Empty State Placeholder (Silhouette Image) -->
+                        <div class="stage-view-panel active" id="stage-panel-empty" style="display:flex;">
+                            <div class="stage-luxury-placeholder">
+                                <div class="silhouette-image-container">
+                                    <img src="images/silhouette_couple.jpg" alt="Virtual Try-On Bride & Groom Silhouette" class="silhouette-couple-img" />
+                                </div>
+                                <p class="luxury-description">
+                                    Your look is being carefully crafted. Upload your photo on the left, select a premium outfit from our collection, and witness the power of our advanced AI.
+                                </p>
+                                <div class="stage-action-row">
+                                    <button type="button" class="btn-stage-generate-radiant" id="btn-stage-empty-generate">
+                                        <span class="btn-radiant-label">⚡ Generate 2D Try-On</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2D Try-On Result View -->
+                        <div class="stage-view-panel" id="stage-panel-2d" style="display:none;">
+                            <div class="output-image-wrapper" id="stage-output-image-wrapper">
+                                <div class="stage-img-frame" id="stage-img-frame">
+                                    <div class="generated-output" id="generated-output">
+                                        <img id="stage-output-tryon-img" class="tryon-output-img" src="" alt="Virtual Try-On Result" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Floating Action Pill: Trigger Custom Outfit Request Modal -->
+                            <div class="floating-recolor-trigger-wrap" id="floating-recolor-trigger-wrap">
+                                <button type="button" class="btn-floating-recolor" id="btn-open-custom-request-modal" title="Request Custom Colors & Tailoring">
+                                    <span class="recolor-sparkle-emoji">✂️</span>
+                                    <span class="recolor-btn-label">Custom Outfit Request</span>
+                                </button>
+                            </div>
+
+                            <!-- Custom Outfit Request Modal Dialog -->
+                            <div class="custom-request-modal-backdrop" id="custom-request-modal" style="display:none;" aria-hidden="true">
+                                <div class="custom-request-modal-dialog">
+                                    <div class="custom-request-modal-header">
+                                        <div class="custom-request-header-meta">
+                                            <div class="custom-request-icon-wrap">✂️</div>
+                                            <div>
+                                                <h3 class="custom-request-modal-title">Custom Outfit Request</h3>
+                                                <p class="custom-request-modal-subtitle">Bespoke Color Customization &amp; Tailoring Instructions</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-close-modal" id="btn-close-custom-request" aria-label="Close Modal">&times;</button>
+                                    </div>
+
+                                    <div class="custom-request-modal-body">
+                                        <!-- Selected Outfit Summary Card -->
+                                        <div class="custom-request-outfit-preview">
+                                            <img id="custom-req-outfit-thumb" src="images/hero_couple.png" alt="Selected Outfit" class="custom-req-thumb" />
+                                            <div class="custom-req-outfit-info">
+                                                <span class="custom-req-cat-pill" id="custom-req-outfit-cat">Suits &amp; Blazers</span>
+                                                <h4 class="custom-req-outfit-name" id="custom-req-outfit-name">Selected Outfit</h4>
+                                                <span class="custom-req-outfit-id" id="custom-req-outfit-id">Outfit ID: #--</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Custom Request Form -->
+                                        <form id="form-custom-outfit-request" class="custom-request-form">
+                                            <input type="hidden" id="custom-req-outfit-id-input" name="outfit_id" value="" />
+
+                                            <!-- 2-Column Colors Selection -->
+                                            <div class="custom-request-colors-grid">
+                                                <!-- Top Garment Color -->
+                                                <div class="custom-color-card">
+                                                    <div class="custom-color-card-head">
+                                                        <span class="custom-color-slot-icon">👔</span>
+                                                        <div>
+                                                            <label class="custom-color-label" for="custom-top-color-input">Top Garment Color</label>
+                                                            <span class="custom-color-sub">Shirt / Blazer / Top</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="custom-color-picker-row">
+                                                        <label class="custom-color-swatch-chip" title="Click to choose custom top color">
+                                                            <input type="color" id="custom-top-color-input" value="#D4AF37" class="custom-native-color-picker" />
+                                                            <span class="custom-color-dot" id="custom-top-color-dot" style="background-color:#D4AF37;"></span>
+                                                        </label>
+                                                        <input type="text" id="custom-top-color-hex" class="custom-hex-input" value="#D4AF37" placeholder="#D4AF37" maxlength="7" />
+                                                    </div>
+                                                    <!-- Top Quick Swatches -->
+                                                    <div class="custom-quick-swatches" id="custom-top-quick-swatches">
+                                                        <button type="button" class="swatch-mini active" data-color="#D4AF37" style="background:#D4AF37;" title="Royal Gold"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#1B5E3B" style="background:#1B5E3B;" title="Emerald Green"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#8B0000" style="background:#8B0000;" title="Ruby Crimson"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#151515" style="background:#151515;" title="Obsidian Black"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#F5F5DC" style="background:#F5F5DC;" title="Champagne Cream"></button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Bottom Garment Color -->
+                                                <div class="custom-color-card">
+                                                    <div class="custom-color-card-head">
+                                                        <span class="custom-color-slot-icon">👖</span>
+                                                        <div>
+                                                            <label class="custom-color-label" for="custom-bottom-color-input">Bottom Garment Color</label>
+                                                            <span class="custom-color-sub">Pants / Skirt / Bottom</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="custom-color-picker-row">
+                                                        <label class="custom-color-swatch-chip" title="Click to choose custom bottom color">
+                                                            <input type="color" id="custom-bottom-color-input" value="#1B2A4A" class="custom-native-color-picker" />
+                                                            <span class="custom-color-dot" id="custom-bottom-color-dot" style="background-color:#1B2A4A;"></span>
+                                                        </label>
+                                                        <input type="text" id="custom-bottom-color-hex" class="custom-hex-input" value="#1B2A4A" placeholder="#1B2A4A" maxlength="7" />
+                                                    </div>
+                                                    <!-- Bottom Quick Swatches -->
+                                                    <div class="custom-quick-swatches" id="custom-bottom-quick-swatches">
+                                                        <button type="button" class="swatch-mini active" data-color="#1B2A4A" style="background:#1B2A4A;" title="Midnight Navy"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#151515" style="background:#151515;" title="Obsidian Black"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#7C3AED" style="background:#7C3AED;" title="Royal Purple"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#B76E79" style="background:#B76E79;" title="Rose Gold"></button>
+                                                        <button type="button" class="swatch-mini" data-color="#D4AF37" style="background:#D4AF37;" title="Royal Gold"></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Customization Notes -->
+                                            <div class="custom-notes-wrap">
+                                                <div class="custom-notes-label-row">
+                                                    <label for="custom-request-notes" class="custom-notes-label">Bespoke Tailoring &amp; Specific Notes</label>
+                                                    <span class="custom-notes-hint">Optional</span>
+                                                </div>
+                                                <textarea id="custom-request-notes" name="notes" class="custom-notes-textarea" rows="3" placeholder="Specify fabric choices, fit preferences, lapel or sleeve adjustments, lining, embroidery details, etc."></textarea>
+                                            </div>
+
+                                            <!-- Modal Actions -->
+                                            <div class="custom-request-modal-footer">
+                                                <button type="button" class="btn-cancel-custom-request" id="btn-cancel-custom-request">Cancel</button>
+                                                <button type="submit" class="btn-submit-custom-request" id="btn-submit-custom-request">
+                                                    <span class="custom-submit-spinner" id="custom-submit-spinner" style="display:none;"></span>
+                                                    <span class="custom-submit-icon" id="custom-submit-icon">✨</span>
+                                                    <span class="custom-submit-text" id="custom-submit-text">Submit Custom Request</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="custom-request-alert" id="custom-request-alert" style="display:none;"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="try-3d-floating-container" id="try-3d-floating-container">
+                                <button type="button" class="btn-prominent-3d-trigger" id="btn-trigger-3d-view">
+                                    <span class="btn-3d-icon">🪐</span>
+                                    <div class="btn-3d-text-wrap">
+                                        <span class="btn-3d-title">Try 3D View</span>
+                                        <span class="btn-3d-subtitle">Generate interactive 360° model</span>
+                                    </div>
+                                    <span class="badge-3d-tech">Tripo3D AI</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 3D Canvas Stage (Step 4 Render) -->
+                        <div class="stage-view-panel" id="stage-panel-3d" style="display:none;">
+                            <div class="stage-canvas-wrapper" id="stage-canvas-3d-mount">
+                                <canvas id="viewer-canvas"></canvas>
+                            </div>
+                            
+                            <!-- Glassmorphism Texture Loading Overlay -->
+                            <div class="stage-bg-glass-loader" id="stage-3d-glass-loader">
+                                <div class="glass-loader-card">
+                                    <span class="glass-loader-gem">✨</span>
+                                    <h4 class="glass-loader-title">Setting Up Luxury Fitting Room</h4>
+                                    <p class="glass-loader-sub">Preparing ambient lighting & 3D floor...</p>
+                                </div>
+                            </div>
+
+                            <div class="floating-3d-controls-bar">
+                                <button type="button" class="ctrl-btn-pill" id="btn-back-to-2d">🖼️ Back to 2D Photo</button>
+                                <button type="button" class="ctrl-btn-pill" id="btn-reset-3d-camera">🎯 Reset View</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Stage Controls & Action Footer -->
+                    <div class="stage-card-footer">
+                        <div class="footer-left-info">
+                            <span class="current-outfit-label" id="stage-current-outfit-title">Royal Velvet Evening Blazer</span>
+                            <span class="outfit-category-pill" id="stage-current-outfit-cat">Gold Velvet Collection</span>
+                        </div>
+                        <div class="footer-right-actions">
+                            <button type="button" class="stage-btn-action" id="btn-stage-download-img">📥 Download Image</button>
+                            <button type="button" class="stage-btn-action primary" id="btn-stage-reset-all">🔄 Reset</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- COLUMN 3 (RIGHT): QUICK NAVIGATION & HISTORY WIDGET -->
+            <div class="tryon-col-right">
+                <div class="tryon-quicknav-card">
+                    <div class="quicknav-header">
+                        <div class="quicknav-header-left">
+                            <span class="quicknav-pulse-dot"></span>
+                            <h3 class="custom-panel-title">QUICK NAVIGATION &amp; HISTORY</h3>
+                        </div>
+                        <span class="quicknav-badge-tag">STUDIO</span>
+                    </div>
+
+                    <!-- Action Card 1: Try-On History -->
+                    <a href="history.html" class="quicknav-action-card card-history" id="nav-card-history" title="Open Try-On History Gallery">
+                        <div class="quicknav-card-top">
+                            <div class="quicknav-icon-box icon-history">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="quicknav-pill-badge badge-history">2D Gallery</span>
+                        </div>
+                        <div class="quicknav-card-body">
+                            <h4 class="quicknav-card-title">Previous Generations</h4>
+                            <p class="quicknav-card-subtitle">View your saved 2D Virtual Try-On results</p>
+                        </div>
+                        <div class="quicknav-card-action">
+                            <span class="quicknav-action-btn btn-history">
+                                <span>Open Gallery</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Action Card 2: 3D Mesh Studio -->
+                    <a href="my-3d-models.html" class="quicknav-action-card card-models" id="nav-card-models" title="Open 3D Model Showcase">
+                        <div class="quicknav-card-top">
+                            <div class="quicknav-icon-box icon-models">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                                </svg>
+                            </div>
+                            <span class="quicknav-pill-badge badge-models">360&deg; Mesh</span>
+                        </div>
+                        <div class="quicknav-card-body">
+                            <h4 class="quicknav-card-title">3D Garment Models</h4>
+                            <p class="quicknav-card-subtitle">Explore 360&deg; interactive avatar meshes</p>
+                        </div>
+                        <div class="quicknav-card-action">
+                            <span class="quicknav-action-btn btn-models">
+                                <span>Explore 3D Studio</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ================================================================== -->
+<!--  GEMINI AI FASHION STYLIST FLOATING CHATBOT WIDGET                 -->
+<!-- ================================================================== -->
+
+<!-- 1. Floating Toggle Button (bottom-right) -->
+<button type="button" class="stylist-chatbot-trigger" id="btn-stylist-chat-trigger" aria-label="Ask AI Stylist" title="Ask AI Fashion Stylist">
+    <span class="trigger-sparkle-icon">✨</span>
+    <span>Ask AI Stylist</span>
+</button>
+
+<!-- 2. Popup Chat Panel -->
+<div class="stylist-chat-panel" id="stylist-chat-panel" role="dialog" aria-modal="true" aria-label="Style360 AI Stylist Chat">
+    <!-- Header Area -->
+    <div class="chat-panel-header">
+        <div class="header-left-stylist">
+            <div class="stylist-avatar-icon">💎</div>
+            <div class="stylist-info-text">
+                <h3 class="stylist-title">Style360 AI Stylist</h3>
+                <span class="stylist-status"><span class="status-online-dot"></span> Online • Gemini AI</span>
+            </div>
+        </div>
+        <button type="button" class="btn-close-chat" id="btn-close-stylist-chat" aria-label="Close Chat">✕</button>
+    </div>
+
+    <!-- Chat Messages Body -->
+    <div class="chat-messages-body" id="chat-messages-container">
+        <div class="chat-message-row ai">
+            <div class="message-bubble">
+                Hello! ✨ I'm your <strong>Style360 AI Fashion Stylist</strong>. Ask me for outfit recommendations, color theory, wedding styling, or skin tone matching!
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Suggestion Chips -->
+    <div class="chat-suggestions-bar">
+        <button type="button" class="suggestion-chip" data-prompt="What outfit matches my skin tone?">"What outfit matches my skin tone?"</button>
+        <button type="button" class="suggestion-chip" data-prompt="Suggest a formal wedding suit">"Suggest a formal wedding suit"</button>
+        <button type="button" class="suggestion-chip" data-prompt="What accessories go with this dress?">"What accessories go with this dress?"</button>
+    </div>
+
+    <!-- Upload Thumbnail Preview Bar (Displayed when image selected) -->
+    <div class="chat-upload-preview-bar" id="chat-upload-preview-bar" style="display:none;">
+        <div class="preview-thumb-wrapper">
+            <img src="" id="chat-upload-thumbnail" alt="Selected photo for AI analysis" />
+            <span class="preview-badge-label">Photo for AI Styling</span>
+        </div>
+        <button type="button" class="btn-remove-upload" id="btn-remove-chat-upload" title="Remove image">✕</button>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="chat-input-container">
+        <!-- Hidden File Input -->
+        <input type="file" id="chat-file-input" accept="image/png, image/jpeg, image/jpg, image/webp" style="display:none;" />
+        
+        <!-- Upload Icon (Image/Paperclip) to left of text input -->
+        <button type="button" class="btn-chat-upload" id="btn-chat-upload-img" aria-label="Upload photo for AI analysis" title="Upload photo for skin tone & body analysis">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+
+        <input type="text" id="stylist-chat-input" class="chat-text-input" placeholder="Ask AI or upload photo for advice..." autocomplete="off" />
+        
+        <button type="button" class="btn-send-chat" id="btn-send-stylist-msg" aria-label="Send Message" title="Send Message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+    </div>
+</div>
+
+<!-- ================================================================== -->
+<!--  STYLE360 GLOBAL TOAST NOTIFICATION CONTAINER                     -->
+<!-- ================================================================== -->
+<div class="style360-toast-container" id="style360-toast-container" aria-live="polite">
+    <div class="style360-toast" id="style360-toast">
+        <div class="toast-icon-wrap" id="toast-icon-wrap">⚠️</div>
+        <div class="toast-body">
+            <h5 class="toast-title" id="toast-title">Category Mismatch</h5>
+            <p class="toast-message" id="toast-message">Please upload a matching photo for this outfit.</p>
+        </div>
+        <button type="button" class="toast-close-btn" id="btn-close-toast" aria-label="Dismiss">&times;</button>
+    </div>
+</div>
+
+<!-- ================================================================== -->
+<!--  SCRIPTS                                                            -->
+<!-- ================================================================== -->
+<script src="js/libs/three.min.js"></script>
+<script src="js/libs/OrbitControls.js"></script>
+<script src="js/libs/GLTFLoader.js"></script>
+<script src="js/libs/OBJLoader.js"></script>
+<script src="js/firebase-config.js?v=35"></script>
+<script src="js/viewer3d.js?v=55"></script>
+<script src="js/app.js?v=51"></script>
+<script src="js/home.js?v=75"></script>
+<script src="js/studio.js?v=10"></script>
+<script src="js/auth.js?v=1"></script>
+<script src="js/user-nav.js?v=54"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/chatbot.js?v=51"></script>
+
+</body>
+</html>

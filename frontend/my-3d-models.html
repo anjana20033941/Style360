@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My 3D Models — Style360 AI Virtual Try-On</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Google model-viewer Web Component -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css?v=22" />
+    <link rel="stylesheet" href="css/home.css?v=9" />
+
+    <style>
+        body {
+            background-color: #F8F6FF;
+            background-image: 
+                radial-gradient(ellipse at 15% 20%, rgba(124, 58, 237, 0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 45%);
+            min-height: 100vh;
+            color: #0F172A;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .models-hero-header {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 3rem 2rem 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .models-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: #F3E8FF;
+            color: #7C3AED;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .models-hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0 0 0.6rem 0;
+            letter-spacing: -0.5px;
+        }
+
+        .models-hero-sub {
+            font-size: 1rem;
+            color: #64748B;
+            max-width: 620px;
+            margin: 0 auto 2rem auto;
+            line-height: 1.6;
+        }
+
+        /* Filter Tabs */
+        .models-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .model-tab-btn {
+            padding: 9px 20px;
+            border-radius: 50px;
+            border: 1.5px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .model-tab-btn:hover {
+            border-color: #A78BFA;
+            color: #7C3AED;
+            transform: translateY(-1px);
+        }
+
+        .model-tab-btn.active {
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+        }
+
+        /* 3D Models Grid */
+        .models-grid-container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .models-grid-container {
+                grid-template-columns: 1fr;
+                padding: 0 1rem 3rem 1rem;
+            }
+        }
+
+        .model-3d-card {
+            background: #FFFFFF;
+            border: 1.5px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .model-3d-card:hover {
+            transform: translateY(-4px);
+            border-color: #C084FC;
+            box-shadow: 0 18px 45px rgba(124, 58, 237, 0.12);
+        }
+
+        /* 3D Viewer Container */
+        .model-viewer-stage {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background: radial-gradient(circle at 50% 50%, #1E1B4B 0%, #0F0E2A 100%);
+            overflow: hidden;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+            outline: none;
+        }
+
+        /* Floating Badge & Overlay Controls */
+        .model-card-top-badges {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            right: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .badge-cat-model {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            color: #FFFFFF;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            pointer-events: auto;
+        }
+
+        .badge-interactive-hint {
+            background: rgba(124, 58, 237, 0.85);
+            backdrop-filter: blur(8px);
+            color: #FFFFFF;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: auto;
+        }
+
+        .viewer-controls-overlay {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 4px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-viewer-ctrl {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-viewer-ctrl:hover {
+            background: #7C3AED;
+        }
+
+        /* Card Body */
+        .model-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .model-title-wrap {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .model-card-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .model-specs-text {
+            font-size: 0.78rem;
+            color: #64748B;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* Actions */
+        .model-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .btn-card-studio {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-card-studio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+        }
+
+        .btn-card-download {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1.5px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-card-download:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+            color: #0F172A;
+        }
+
+        /* ================================================================== */
+        /*  EXPANDED 3D VIEW MODAL                                            */
+        /* ================================================================== */
+        .model-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(10, 15, 30, 0.84);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .model-modal-overlay.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .model-modal-container {
+            background: #0F172A;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 1200px;
+            height: 86vh;
+            max-height: 860px;
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.75), 0 0 50px rgba(124, 58, 237, 0.22);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.25s, height 0.25s;
+        }
+
+        .model-modal-overlay.active .model-modal-container {
+            transform: scale(1);
+        }
+
+        .model-modal-container.fullscreen {
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+            border: none;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(239, 68, 68, 0.85);
+            border-color: transparent;
+            transform: rotate(90deg);
+        }
+
+        .modal-viewer-split {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) {
+            .modal-viewer-split {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+        }
+
+        .modal-stage-col {
+            flex: 1.8;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, #1E1B4B 0%, #0A091A 100%);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-stage-header {
+            position: absolute;
+            top: 18px;
+            left: 22px;
+            right: 68px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .modal-badge-3d {
+            background: rgba(124, 58, 237, 0.85);
+            backdrop-filter: blur(8px);
+            color: #FFFFFF;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            pointer-events: auto;
+        }
+
+        .modal-badge-hint {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            color: #E2E8F0;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            pointer-events: auto;
+        }
+
+        .modal-btn-expand {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+
+        .modal-btn-expand:hover {
+            background: #7C3AED;
+        }
+
+        .modal-canvas-wrapper {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #modal-model-viewer {
+            width: 100%;
+            height: 100%;
+            outline: none;
+            --poster-color: transparent;
+        }
+
+        .modal-floating-toolbar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 50px;
+            z-index: 25;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+        }
+
+        .modal-tool-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-tool-btn:hover {
+            background: #7C3AED;
+        }
+
+        .modal-toolbar-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-lighting-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .modal-lighting-label {
+            font-size: 0.72rem;
+            color: #94A3B8;
+            font-weight: 600;
+            margin-right: 2px;
+        }
+
+        .modal-light-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #CBD5E1;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-light-pill:hover,
+        .modal-light-pill.active {
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            border-color: transparent;
+        }
+
+        /* Right Detail Column */
+        .modal-details-col {
+            flex: 1;
+            background: #0F172A;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2.2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            color: #FFFFFF;
+        }
+
+        .modal-detail-cat {
+            display: inline-block;
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            color: #C084FC;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 0.8rem;
+            align-self: flex-start;
+        }
+
+        .modal-detail-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.35;
+        }
+
+        .modal-detail-sub {
+            font-size: 0.82rem;
+            color: #94A3B8;
+            margin: 0 0 1.6rem 0;
+            line-height: 1.5;
+        }
+
+        .modal-specs-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 1.2rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .specs-box-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #E2E8F0;
+            margin: 0 0 0.8rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .spec-label {
+            font-size: 0.7rem;
+            color: #64748B;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .spec-val {
+            font-size: 0.82rem;
+            color: #F1F5F9;
+            font-weight: 700;
+        }
+
+        .modal-actions-wrap {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 1rem;
+        }
+
+        .btn-modal-studio {
+            padding: 12px 18px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+            transition: all 0.2s;
+        }
+
+        .btn-modal-studio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+        }
+
+        .btn-modal-download {
+            padding: 13px 20px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+            transition: all 0.2s;
+        }
+
+        .btn-modal-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with User Avatar Dropdown -->
+    <header class="app-header" id="main-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo" id="nav-home-logo" style="display: flex; align-items: center;">
+                <img src="images/user_logo.jpeg" alt="Style360 Logo" style="height: 105px; max-height: 115px; width: auto; object-fit: contain; display: block;" />
+            </a>
+
+            <div class="header-actions">
+                <!-- User Bell Notification Dropdown -->
+                <div class="notification-menu-container" id="notification-menu-wrap" style="display:none;">
+                    <button type="button" class="notification-bell-btn" id="notification-bell" data-alias-id="btn-notification-bell" aria-label="Notifications" title="Notifications">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge" id="notification-badge" style="display:none;">0</span>
+                    </button>
+                    <div class="notification-dropdown-menu" id="notification-dropdown" data-alias-id="notification-dropdown-menu">
+                        <div class="notif-dropdown-head">
+                            <h4>🔔 Notifications</h4>
+                            <button type="button" class="btn-mark-all-read" id="btn-mark-all-read">Mark all read</button>
+                        </div>
+                        <div class="notif-list-container" id="notif-list-container">
+                            <div class="notif-empty-state">No new notifications</div>
+                        </div>
+                        <div class="notif-dropdown-foot">
+                            <a href="history.html?tab=custom-requests" class="notif-view-all-link">View Custom Requests Tracker &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auth Action Buttons (Visible for Guests) -->
+                <div class="header-auth-buttons" id="header-auth-btns" style="display:none;">
+                    <a href="auth.html?mode=signin" class="btn-header-signin" id="btn-header-signin">Sign In</a>
+                    <a href="auth.html?mode=signup" class="btn-header-signup" id="btn-header-signup">Sign Up</a>
+                </div>
+
+                <!-- Modern User Profile Avatar & Floating Dropdown Menu (Visible for Authenticated Users) -->
+                <div class="user-menu-container" id="user-menu-wrap" style="display:none;">
+                    <button class="user-avatar-btn" id="btn-user-avatar" aria-label="User Account Menu" title="User Menu">
+                        <span class="user-avatar-initials" id="header-avatar-initials">👤</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <div class="dropdown-user-header">
+                            <div class="dropdown-avatar-circle" id="drop-avatar-circle">👤</div>
+                            <div class="dropdown-user-info">
+                                <h4 id="drop-user-name">Guest User</h4>
+                                <p id="drop-user-email">Sign in to sync your looks</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span>Edit Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>My Try-On History</span>
+                        </a>
+                        <a href="my-3d-models.html" class="dropdown-item active" style="background:#F5F3FF; color:#7C3AED;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                            <span>My 3D Models</span>
+                        </a>
+                        <a href="admin.html" class="dropdown-item" id="drop-admin-link" style="display:none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Admin Console</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item signout-item" id="btn-dropdown-signout">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Header -->
+        <section class="models-hero-header">
+            <span class="models-hero-badge">🪐 360° Neural Mesh Gallery</span>
+            <h1 class="models-hero-title">My 3D Models</h1>
+            <p class="models-hero-sub">Interact, orbit in 360 degrees, and download your personalized 3D virtual garments rendered with physics-based PBR materials.</p>
+
+        </section>
+
+        <!-- 3D Models Grid -->
+        <section class="models-grid-container" id="models-grid">
+            <!-- Dynamically populated -->
+        </section>
+    </main>
+
+    <!-- Interactive 3D Model Expanded Modal Viewer -->
+    <div class="model-modal-overlay" id="model-modal-overlay" aria-hidden="true">
+        <div class="model-modal-container" id="model-modal-container">
+            <!-- Close Button -->
+            <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close 3D View">&times;</button>
+
+            <div class="modal-viewer-split">
+                <!-- Left: Expanded 3D Viewport Stage -->
+                <div class="modal-stage-col">
+                    <div class="modal-stage-header">
+                        <span class="modal-badge-3d">🪐 360° Neural Mesh</span>
+                        <span class="modal-badge-hint">✨ Drag to rotate • Scroll to zoom</span>
+                        <button type="button" class="modal-btn-expand" id="modal-btn-fullscreen" title="Toggle Fullscreen">⛶</button>
+                    </div>
+
+                    <div class="modal-canvas-wrapper" id="modal-canvas-wrapper">
+                        <model-viewer id="modal-model-viewer"
+                            src=""
+                            alt="Style360 3D Mesh"
+                            crossorigin="anonymous"
+                            camera-target="auto auto auto"
+                            camera-orbit="0deg 75deg auto"
+                            bounds="tight"
+                            auto-rotate
+                            camera-controls
+                            touch-action="pan-y"
+                            shadow-intensity="1.5"
+                            shadow-softness="0.75"
+                            exposure="1.1"
+                            environment-image="neutral"
+                            rotation-per-second="22deg"
+                            interaction-prompt="auto">
+                        </model-viewer>
+                    </div>
+
+                    <!-- Floating Controls Toolbar -->
+                    <div class="modal-floating-toolbar">
+                        <button type="button" class="modal-tool-btn" id="modal-tool-spin">⏸ Pause</button>
+                        <button type="button" class="modal-tool-btn" id="modal-tool-reset">🎯 Reset View</button>
+                        <div class="modal-toolbar-divider"></div>
+                        <div class="modal-lighting-group">
+                            <span class="modal-lighting-label">💡 Lighting:</span>
+                            <button type="button" class="modal-light-pill active" data-light="studio">Studio</button>
+                            <button type="button" class="modal-light-pill" data-light="warm">Warm</button>
+                            <button type="button" class="modal-light-pill" data-light="dramatic">Dramatic</button>
+                            <button type="button" class="modal-light-pill" data-light="bright">Bright</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Details & Action Controls -->
+                <div class="modal-details-col">
+                    <span class="modal-detail-cat" id="modal-detail-cat">Western Collection</span>
+                    <h2 class="modal-detail-title" id="modal-detail-title">Outfit Title</h2>
+                    <p class="modal-detail-sub" id="modal-detail-sub">Generated via Style360 AI Virtual Fitting Engine</p>
+
+                    <!-- Spec Box -->
+                    <div class="modal-specs-box">
+                        <h4 class="specs-box-title">3D Mesh Architecture</h4>
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <span class="spec-label">Format</span>
+                                <span class="spec-val">GLTF 2.0 Binary (.glb)</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Shading</span>
+                                <span class="spec-val">PBR Metallic / Rough</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Topology</span>
+                                <span class="spec-val">Subdivision Quad/Tri</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Engine</span>
+                                <span class="spec-val">Tripo3D AI V3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="modal-actions-wrap">
+                        <a href="#" download="model.glb" class="btn-modal-download" id="modal-btn-download">📥 Download .GLB File</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js?v=1"></script>
+    <script src="js/user-nav.js?v=54"></script>
+    <script src="js/main.js?v=2"></script>
+    <script src="js/models3d.js?v=8"></script>
+</body>
+</html>
