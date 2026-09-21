@@ -247,7 +247,7 @@
     display: none;
     align-items: center !important;
     justify-content: center !important;
-    background: radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.06) 0%, transparent 60%), linear-gradient(180deg, #ffffff 0%, #f4f4f6 55%, #e9e9ec 100%) !important;
+    background: radial-gradient(ellipse at 50% 85%, rgba(124, 58, 237, 0.05) 0%, transparent 60%), linear-gradient(180deg, #f4f5f8 0%, #e6e8ee 55%, #d9dce5 100%) !important;
     background-image: none !important;
     border-radius: 20px;
     overflow: hidden !important;

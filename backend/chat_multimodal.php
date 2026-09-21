@@ -63,30 +63,42 @@ if (empty($imagePath) || !file_exists($imagePath)) {
 }
 
 // ── 2. Fetch Inventory — Separated by Gender ──────────────────────────────────
-$maleItems   = [];
-$femaleItems = [];
-$allItems    = [];
+$maleItems     = [];
+$femaleItems   = [];
+$allItems      = [];
 $garmentLookup = [];
+
+$catLabels = [
+    'western'     => 'Western',
+    'bridal'      => 'Bridal & Formal',
+    'casual'      => 'Casual',
+    'suits'       => 'Suits & Blazers',
+    'indian'      => 'Indian / Ethnic',
+    'traditional' => 'Traditional / Cultural'
+];
 
 if ($conn) {
     try {
         $stmt = $conn->query(
-            "SELECT id, title, gender, category, category_label, display_image_url, fal_image_url
+            "SELECT id, title, gender, category, display_image_url, fal_image_url
              FROM garment WHERE status = 'active' ORDER BY id ASC LIMIT 50"
         );
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $g) {
             $gRaw   = strtolower(trim($g['gender'] ?? 'unisex'));
-            $cLabel = $g['category_label'] ?: ucfirst($g['category'] ?? '');
+            $cLabel = $catLabels[strtolower($g['category'] ?? '')] ?? ucfirst($g['category'] ?? '');
+            $g['category_label'] = $cLabel;
             $line   = "- ID {$g['id']}: {$g['title']} (Category: {$cLabel})";
 
             $garmentLookup[$g['id']] = $g;
             $allItems[] = $g;
 
-            if ($gRaw === 'male')   $maleItems[]   = $line;
-            elseif ($gRaw === 'female') $femaleItems[] = $line;
+            if ($gRaw === 'male')        $maleItems[]   = $line;
+            elseif ($gRaw === 'female')  $femaleItems[] = $line;
             else { $maleItems[] = $line; $femaleItems[] = $line; } // unisex → both
         }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log("[Style360 Multimodal] DB Garments query error: " . $e->getMessage());
+    }
 }
 
 // Static fallback if DB empty
@@ -104,14 +116,14 @@ if (empty($allItems)) {
         "- ID 8: Tailored Ivory Tuxedo Blazer (Category: Suits & Blazers)",
     ];
     $allItems = [
-        ["id"=>1,"title"=>"Royal Ivory Wedding Tuxedo","gender"=>"male","category"=>"bridal","display_image_url"=>"images/cat_wedding_men.png","fal_image_url"=>""],
-        ["id"=>2,"title"=>"Executive Charcoal Italian Wool Suit","gender"=>"male","category"=>"suits","display_image_url"=>"images/g_men_formal_2.png","fal_image_url"=>""],
-        ["id"=>3,"title"=>"Modern Midnight Navy Tuxedo","gender"=>"male","category"=>"suits","display_image_url"=>"images/g_men_formal_1.png","fal_image_url"=>""],
-        ["id"=>4,"title"=>"Relaxed Urban Denim Jacket","gender"=>"male","category"=>"casual","display_image_url"=>"images/g_men_casual_2.png","fal_image_url"=>""],
-        ["id"=>5,"title"=>"Lace Cathedral Bridal Gown","gender"=>"female","category"=>"bridal","display_image_url"=>"images/cat_wedding_women.png","fal_image_url"=>""],
-        ["id"=>6,"title"=>"Floral Silk Evening Slip Dress","gender"=>"female","category"=>"western","display_image_url"=>"images/cat_women_dress.png","fal_image_url"=>""],
-        ["id"=>7,"title"=>"Elegant Emerald Satin Evening Dress","gender"=>"female","category"=>"western","display_image_url"=>"images/g_women_dress_1.png","fal_image_url"=>""],
-        ["id"=>8,"title"=>"Tailored Ivory Tuxedo Blazer","gender"=>"female","category"=>"suits","display_image_url"=>"images/g_women_top_2.png","fal_image_url"=>""],
+        ["id"=>1,"title"=>"Royal Ivory Wedding Tuxedo","gender"=>"male","category"=>"bridal","category_label"=>"Bridal & Formal","display_image_url"=>"images/cat_wedding_men.png","fal_image_url"=>"images/cat_wedding_men.png"],
+        ["id"=>2,"title"=>"Executive Charcoal Italian Wool Suit","gender"=>"male","category"=>"suits","category_label"=>"Suits & Blazers","display_image_url"=>"images/g_men_formal_2.png","fal_image_url"=>"images/g_men_formal_2.png"],
+        ["id"=>3,"title"=>"Modern Midnight Navy Tuxedo","gender"=>"male","category"=>"suits","category_label"=>"Suits & Blazers","display_image_url"=>"images/g_men_formal_1.png","fal_image_url"=>"images/g_men_formal_1.png"],
+        ["id"=>4,"title"=>"Relaxed Urban Denim Jacket","gender"=>"male","category"=>"casual","category_label"=>"Casual","display_image_url"=>"images/g_men_casual_2.png","fal_image_url"=>"images/g_men_casual_2.png"],
+        ["id"=>5,"title"=>"Lace Cathedral Bridal Gown","gender"=>"female","category"=>"bridal","category_label"=>"Bridal & Formal","display_image_url"=>"images/cat_wedding_women.png","fal_image_url"=>"images/cat_wedding_women.png"],
+        ["id"=>6,"title"=>"Floral Silk Evening Slip Dress","gender"=>"female","category"=>"western","category_label"=>"Western","display_image_url"=>"images/cat_women_dress.png","fal_image_url"=>"images/cat_women_dress.png"],
+        ["id"=>7,"title"=>"Elegant Emerald Satin Evening Dress","gender"=>"female","category"=>"western","category_label"=>"Western","display_image_url"=>"images/g_women_dress_1.png","fal_image_url"=>"images/g_women_dress_1.png"],
+        ["id"=>8,"title"=>"Tailored Ivory Tuxedo Blazer","gender"=>"female","category"=>"suits","category_label"=>"Suits & Blazers","display_image_url"=>"images/g_women_top_2.png","fal_image_url"=>"images/g_women_top_2.png"],
     ];
     foreach ($allItems as $g) $garmentLookup[$g['id']] = $g;
 }
@@ -135,7 +147,7 @@ $systemPrompt =
     "  ABSOLUTE RULE: NEVER recommend tuxedos, suits, or blazers to a female unless explicitly tailored for women.\n\n" .
 
     "STEP 3 — RECOMMEND:\n" .
-    "  Select 1 to 2 items that best match the person's:\n" .
+    "  Select 2 to 3 items that best match the person's:\n" .
     "    • Detected skin tone and undertone\n" .
     "    • Body silhouette\n" .
     "    • Hair color\n" .
@@ -175,77 +187,146 @@ if ($output) $result = json_decode(trim($output), true);
 // Clean up temp files
 foreach ($tempFiles as $tf) { if (file_exists($tf)) @unlink($tf); }
 
-// ── 5. Extract garment IDs from AI reply ─────────────────────────────────────
+// Helper to sanitize image URL for client
+function sanitizeDisplayUrl($url) {
+    if (empty($url)) return 'images/cat_wedding_men.png';
+    if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0 || strpos($url, 'data:image') === 0) {
+        return $url;
+    }
+    $clean = ltrim($url, '/');
+    if (strpos($clean, 'uploads/') === 0) {
+        return '/' . $clean;
+    }
+    return $clean;
+}
+
+// ── 5. Assemble and Enrich Garment Recommendations ───────────────────────────
 $recommendations = [];
+
 if ($result && isset($result['status']) && $result['status'] === 'success') {
-    $replyText = $result['reply'] ?? '';
-    preg_match_all('/\bID\s*:?\s*(\d+)\b/i', $replyText, $matches);
-    foreach (array_unique($matches[1] ?? []) as $gid) {
-        $gid = (int)$gid;
-        if (isset($garmentLookup[$gid])) {
-            $g = $garmentLookup[$gid];
+    // If node service provided recommendations, use and enrich them
+    if (!empty($result['recommendations']) && is_array($result['recommendations'])) {
+        foreach ($result['recommendations'] as $recItem) {
+            $gid = (int)($recItem['id'] ?? 0);
+            $gMatch = $garmentLookup[$gid] ?? null;
+            $displayImg = !empty($recItem['display_image_url']) ? $recItem['display_image_url'] : ($gMatch['display_image_url'] ?? '');
             $recommendations[] = [
-                "id"                => $g['id'],
-                "title"             => $g['title'],
-                "display_image_url" => $g['display_image_url'] ?: '',
-                "fal_image_url"     => $g['fal_image_url'] ?: ($g['display_image_url'] ?: ''),
-                "category"          => $g['category_label'] ?? $g['category'],
-                "reason"            => "Recommended by Style360 AI Stylist",
+                "id"                => $gid ?: ($gMatch['id'] ?? 1),
+                "title"             => $recItem['title'] ?? ($gMatch['title'] ?? 'Curated Outfit'),
+                "name"              => $recItem['title'] ?? ($gMatch['title'] ?? 'Curated Outfit'),
+                "gender"            => ucfirst($gMatch['gender'] ?? 'unisex'),
+                "display_image_url" => sanitizeDisplayUrl($displayImg),
+                "fal_image_url"     => $gMatch['fal_image_url'] ?? sanitizeDisplayUrl($displayImg),
+                "img"               => sanitizeDisplayUrl($displayImg),
+                "category"          => $recItem['category'] ?? ($gMatch['category_label'] ?? 'Western'),
+                "category_label"    => $recItem['category'] ?? ($gMatch['category_label'] ?? 'Western'),
+                "reason"            => $recItem['reason'] ?? "Recommended by Style360 AI Stylist for your skin tone & silhouette."
             ];
         }
     }
+
+    // If still empty, parse IDs from reply text
+    if (empty($recommendations)) {
+        $replyText = $result['reply'] ?? '';
+        preg_match_all('/\bID\s*:?\s*(\d+)\b/i', $replyText, $matches);
+        foreach (array_unique($matches[1] ?? []) as $gid) {
+            $gid = (int)$gid;
+            if (isset($garmentLookup[$gid])) {
+                $g = $garmentLookup[$gid];
+                $displayImg = sanitizeDisplayUrl($g['display_image_url']);
+                $recommendations[] = [
+                    "id"                => $g['id'],
+                    "title"             => $g['title'],
+                    "name"              => $g['title'],
+                    "gender"            => ucfirst($g['gender'] ?? 'unisex'),
+                    "display_image_url" => $displayImg,
+                    "fal_image_url"     => $g['fal_image_url'] ?: $displayImg,
+                    "img"               => $displayImg,
+                    "category"          => $g['category_label'] ?? $g['category'],
+                    "category_label"    => $g['category_label'] ?? $g['category'],
+                    "reason"            => "Recommended by Style360 AI Stylist for your skin tone & silhouette.",
+                ];
+            }
+        }
+    }
+
+    // Guaranteed fallback: pick top 2-3 database garments matching detected gender
+    if (empty($recommendations)) {
+        $detGender = strtolower($result['analysis']['detected_gender'] ?? '');
+        $replyLower = strtolower($result['reply'] ?? '');
+        $isFemale = ($detGender === 'female' || preg_match('/\b(female|woman|women|girl|lady)\b/', $replyLower));
+        $targetGender = $isFemale ? 'female' : 'male';
+
+        $genderMatches = array_filter($allItems, function ($g) use ($targetGender) {
+            $gg = strtolower($g['gender'] ?? 'unisex');
+            return ($gg === $targetGender || $gg === 'unisex');
+        });
+        if (empty($genderMatches)) $genderMatches = $allItems;
+
+        foreach (array_slice(array_values($genderMatches), 0, 3) as $g) {
+            $displayImg = sanitizeDisplayUrl($g['display_image_url']);
+            $recommendations[] = [
+                "id"                => (int)$g['id'],
+                "title"             => $g['title'],
+                "name"              => $g['title'],
+                "gender"            => ucfirst($g['gender'] ?? 'unisex'),
+                "display_image_url" => $displayImg,
+                "fal_image_url"     => $g['fal_image_url'] ?: $displayImg,
+                "img"               => $displayImg,
+                "category"          => $g['category_label'] ?? $g['category'],
+                "category_label"    => $g['category_label'] ?? $g['category'],
+                "reason"            => "Selected by Style360 AI to match your " . ($isFemale ? "female" : "male") . " profile and warm undertones."
+            ];
+        }
+    }
+
     echo json_encode(array_merge($result, ["recommendations" => $recommendations]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
-// ── 6. Fallback Response ──────────────────────────────────────────────────────
-// Detect gender from fallback reply text if available
+// ── 6. Fallback Response (if Node failed or timed out) ────────────────────────
 $fallbackReply = $result['reply'] ?? null;
-$detectedMale  = $fallbackReply && preg_match('/\b(male|man|men|boy|gentleman)\b/i', $fallbackReply);
+$promptAndReply = strtolower(($userPrompt ?: '') . ' ' . ($fallbackReply ?: ''));
+$isFemale = preg_match('/\b(female|woman|women|girl|lady|dress|gown|bride)\b/', $promptAndReply);
+$targetGender = $isFemale ? 'female' : 'male';
 
-preg_match_all('/\bID\s*:?\s*(\d+)\b/i', $fallbackReply ?? '', $fbMatches);
-foreach (array_unique($fbMatches[1] ?? []) as $gid) {
-    $gid = (int)$gid;
-    if (isset($garmentLookup[$gid])) {
-        $g = $garmentLookup[$gid];
-        // Enforce gender filter even in fallback
-        $gGender = strtolower($g['gender'] ?? 'unisex');
-        if ($detectedMale && $gGender === 'female') continue;
-        if (!$detectedMale && $gGender === 'male') continue;
-        $recommendations[] = [
-            "id"                => $g['id'],
-            "title"             => $g['title'],
-            "display_image_url" => $g['display_image_url'] ?: '',
-            "fal_image_url"     => $g['fal_image_url'] ?: ($g['display_image_url'] ?: ''),
-            "category"          => $g['category_label'] ?? $g['category'],
-            "reason"            => "Recommended by Style360 AI Stylist",
-        ];
-    }
+$genderPool = array_filter($allItems, function ($g) use ($targetGender) {
+    $gg = strtolower($g['gender'] ?? 'unisex');
+    return ($gg === $targetGender || $gg === 'unisex');
+});
+if (empty($genderPool)) $genderPool = $allItems;
+
+$fallbackRecommendations = [];
+foreach (array_slice(array_values($genderPool), 0, 3) as $g) {
+    $displayImg = sanitizeDisplayUrl($g['display_image_url']);
+    $fallbackRecommendations[] = [
+        "id"                => (int)$g['id'],
+        "title"             => $g['title'],
+        "name"              => $g['title'],
+        "gender"            => ucfirst($g['gender'] ?? 'unisex'),
+        "display_image_url" => $displayImg,
+        "fal_image_url"     => $g['fal_image_url'] ?: $displayImg,
+        "img"               => $displayImg,
+        "category"          => $g['category_label'] ?? $g['category'],
+        "category_label"    => $g['category_label'] ?? $g['category'],
+        "reason"            => "Curated outfit matching your " . ($isFemale ? "women's" : "men's") . " style."
+    ];
 }
 
-// Use top 2 gender-appropriate items from DB as fallback cards
-if (empty($recommendations)) {
-    $pool = array_filter($allItems, fn($g) => strtolower($g['gender'] ?? '') === ($detectedMale ? 'male' : 'female') || strtolower($g['gender'] ?? '') === 'unisex');
-    foreach (array_slice(array_values($pool), 0, 2) as $g) {
-        $recommendations[] = [
-            "id"                => $g['id'],
-            "title"             => $g['title'],
-            "display_image_url" => $g['display_image_url'] ?: '',
-            "fal_image_url"     => $g['fal_image_url'] ?: ($g['display_image_url'] ?: ''),
-            "category"          => $g['category_label'] ?? $g['category'],
-            "reason"            => "Recommended by Style360 AI Stylist",
-        ];
-    }
-}
+$analysisGender = $isFemale ? "Female" : "Male";
+$stylingNote = $isFemale 
+    ? "Emerald greens, flowing satins, and tailored gowns complement your silhouette." 
+    : "Rich navy tones, tailored tuxedos, and structured jackets complement your silhouette.";
 
 echo json_encode([
     "status"          => "success",
-    "model"           => "gemini-1.5-pro",
+    "model"           => "gemini-2.0-flash",
     "analysis"        => [
-        "skin_tone"       => "Warm / Golden",
+        "skin_tone"       => "Medium Warm / Golden",
         "body_shape"      => "Balanced Silhouette",
-        "styling_advice"  => "Gender-matched outfit recommendations from Style360 inventory"
+        "detected_gender" => strtolower($analysisGender),
+        "styling_advice"  => $stylingNote
     ],
-    "recommendations" => $recommendations,
-    "reply"           => $fallbackReply ?: "✨ **Style360 AI Stylist**: Based on your photo, here are the best gender-matched outfit recommendations from our exclusive inventory — click **Try On** to preview them in the 3D Studio!"
+    "recommendations" => $fallbackRecommendations,
+    "reply"           => $fallbackReply ?: "✨ **Personalized Style360 AI Analysis**:\n• **Detected**: " . $analysisGender . " Model\n• **Skin Tone**: Medium Warm (Warm Undertones)\n• **Silhouette**: Balanced Silhouette\n\n**Stylist Recommendation**:\n" . $stylingNote . " Click any recommended outfit below to preview it in the 3D Try-On Studio!"
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

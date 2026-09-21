@@ -202,6 +202,21 @@
             });
         }
 
+        // Virtual Try-On link inside dropdown
+        var dropTryonLink = document.getElementById('drop-tryon-link');
+        if (dropTryonLink) {
+            dropTryonLink.addEventListener('click', function (e) {
+                var path = window.location.pathname.toLowerCase();
+                var isIndex = path.indexOf('index.html') !== -1 || path.endsWith('/') || path.endsWith('/frontend') || path.endsWith('/frontend/') || path.endsWith('/style360') || path.endsWith('/style360/');
+                if (isIndex && typeof window.showTryOnPage === 'function') {
+                    e.preventDefault();
+                    if (dropdownMenu) dropdownMenu.classList.remove('show');
+                    window.showTryOnPage();
+                    try { window.history.pushState(null, '', 'index.html#tryon'); } catch (err) {}
+                }
+            });
+        }
+
         // Initialize User Notification Bell
         initNotificationBell(user);
     }

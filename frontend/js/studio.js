@@ -237,32 +237,42 @@
                 // Check if existing uploaded photo conflicts with the new gender toggle
                 if (state.userPhotoData && state.detectedPhotoGender) {
                     if (state.detectedPhotoGender !== gender) {
-                        // Reject and clear mismatched photo
-                        var photoInput = document.getElementById('tryon-user-upload-input');
-                        var photoPreviewWrap = document.getElementById('tryon-user-preview-wrap');
-                        var photoPreviewImg = document.getElementById('tryon-user-preview-img');
-                        var photoEmptyState = document.getElementById('tryon-user-empty-state');
-                        var photoDropzone = document.getElementById('tryon-photo-dropzone');
+                        if (isManual) {
+                            // User manually overrides or confirms model gender
+                            state.detectedPhotoGender = gender;
+                            state.isPhotoVerified = true;
+                            if (window.tryonState) {
+                                window.tryonState.detectedPhotoGender = gender;
+                                window.tryonState.isPhotoVerified = true;
+                            }
+                        } else {
+                            // Reject and clear mismatched photo on automatic conflict
+                            var photoInput = document.getElementById('tryon-user-upload-input');
+                            var photoPreviewWrap = document.getElementById('tryon-user-preview-wrap');
+                            var photoPreviewImg = document.getElementById('tryon-user-preview-img');
+                            var photoEmptyState = document.getElementById('tryon-user-empty-state');
+                            var photoDropzone = document.getElementById('tryon-photo-dropzone');
 
-                        if (photoInput) photoInput.value = '';
-                        if (photoPreviewWrap) photoPreviewWrap.style.display = 'none';
-                        if (photoPreviewImg) photoPreviewImg.src = '';
-                        if (photoEmptyState) photoEmptyState.style.display = 'block';
+                            if (photoInput) photoInput.value = '';
+                            if (photoPreviewWrap) photoPreviewWrap.style.display = 'none';
+                            if (photoPreviewImg) photoPreviewImg.src = '';
+                            if (photoEmptyState) photoEmptyState.style.display = 'block';
 
-                        state.userPhotoData = null;
-                        state.isPhotoVerified = false;
-                        if (window.tryonState) {
-                            window.tryonState.userPhotoData = null;
-                            window.tryonState.detectedPhotoGender = null;
-                            window.tryonState.isPhotoVerified = false;
+                            state.userPhotoData = null;
+                            state.isPhotoVerified = false;
+                            if (window.tryonState) {
+                                window.tryonState.userPhotoData = null;
+                                window.tryonState.detectedPhotoGender = null;
+                                window.tryonState.isPhotoVerified = false;
+                            }
+
+                            if (photoDropzone) {
+                                photoDropzone.classList.add('mismatch-error');
+                                setTimeout(function () { photoDropzone.classList.remove('mismatch-error'); }, 800);
+                            }
+
+                            showToast('error', 'Gender Mismatch', '❌ Gender Mismatch: Selected outfit does not match the uploaded model\'s gender.', 6000);
                         }
-
-                        if (photoDropzone) {
-                            photoDropzone.classList.add('mismatch-error');
-                            setTimeout(function () { photoDropzone.classList.remove('mismatch-error'); }, 800);
-                        }
-
-                        showToast('error', 'Gender Mismatch', '❌ Gender Mismatch: Selected outfit does not match the uploaded model\'s gender.', 6000);
                     }
                 }
             }
@@ -354,7 +364,7 @@
                     body: JSON.stringify({
                         image: thumbData,
                         file_name: file.name || '',
-                        expected_gender: activeGender.toLowerCase(),
+                        expected_gender: instantDetected ? instantDetected.toLowerCase() : '',
                         outfit_name: '',
                         outfit_category: ''
                     })
@@ -615,6 +625,125 @@
                 return false;
             }
             return true;
+        },
+
+        // Direct setter for User Photo (e.g. from Chatbot upload or drag-and-drop)
+        setUserPhoto: function (base64Data, genderHint) {
+            var self = this;
+            var state = self.getState();
+            if (!base64Data) return;
+
+            var activeGender = genderHint || state.detectedPhotoGender || state.selectedGender || 'Male';
+            state.userPhotoData = base64Data;
+            state.isPhotoVerified = true;
+            state.detectedPhotoGender = activeGender;
+            state.selectedGender = activeGender;
+
+            if (window.tryonState) {
+                window.tryonState.userPhotoData = base64Data;
+                window.tryonState.isPhotoVerified = true;
+                window.tryonState.detectedPhotoGender = activeGender;
+                window.tryonState.selectedGender = activeGender;
+            }
+
+            var photoPreviewWrap = document.getElementById('tryon-user-preview-wrap');
+            var photoPreviewImg  = document.getElementById('tryon-user-preview-img');
+            var photoEmptyState  = document.getElementById('tryon-user-empty-state');
+            var cardStep1        = document.getElementById('card-step-1');
+            var photoDropzone    = document.getElementById('tryon-photo-dropzone');
+
+            if (photoPreviewImg) photoPreviewImg.src = base64Data;
+            if (photoPreviewWrap) photoPreviewWrap.style.display = 'inline-block';
+            if (photoEmptyState) photoEmptyState.style.display = 'none';
+            if (cardStep1) cardStep1.classList.remove('input-error-highlight');
+            if (photoDropzone) photoDropzone.classList.remove('input-error-highlight');
+
+            self.syncGenderToggle(activeGender);
+            self.checkGatekeeper();
+        },
+
+        // Direct setter for Garment Selection (e.g. from Chatbot recommendation card)
+        selectGarment: function (garment) {
+            var self = this;
+            var state = self.getState();
+            if (!garment) return;
+
+            var gGender = self.getGarmentGender(garment);
+            if (gGender && gGender !== 'Unisex') {
+                self.syncGenderToggle(gGender);
+                state.selectedGender = gGender;
+                if (window.tryonState) window.tryonState.selectedGender = gGender;
+            }
+
+            var rawImg = garment.display_image_url || garment.img || '';
+            var resolvedImg = rawImg;
+            if (resolvedImg && resolvedImg.indexOf('http') !== 0 && resolvedImg.indexOf('data:') !== 0) {
+                var cleanImg = resolvedImg.replace(/^\/+/, '');
+                var pfx = (window.location.pathname.indexOf('/style360') === 0) ? '/style360' : '';
+                if (cleanImg.indexOf('uploads/') === 0) {
+                    resolvedImg = pfx ? (pfx + '/' + cleanImg) : ('/' + cleanImg);
+                } else if (cleanImg.indexOf('images/') === 0) {
+                    resolvedImg = cleanImg;
+                } else {
+                    resolvedImg = pfx ? (pfx + '/' + cleanImg) : ('/' + cleanImg);
+                }
+            }
+
+            var isFem = (garment.gender && String(garment.gender).toLowerCase() === 'female') || (gGender === 'Female');
+            var fallbackImg = isFem ? 'images/cat_wedding_women.png' : 'images/cat_wedding_men.png';
+            if (!resolvedImg) resolvedImg = fallbackImg;
+
+            var formattedGarment = {
+                id: garment.id,
+                title: garment.title || garment.name || 'Selected Outfit',
+                name: garment.name || garment.title || 'Selected Outfit',
+                gender: garment.gender || gGender || 'Unisex',
+                category: garment.category || 'western',
+                categoryLabel: garment.category_label || garment.categoryLabel || 'Outfit',
+                desc: garment.desc || ((garment.category_label || garment.category || '') + ' Collection Outfit'),
+                img: resolvedImg,
+                display_image_url: resolvedImg,
+                fal_image_url: garment.fal_image_url || garment.display_image_url || resolvedImg
+            };
+
+            state.selectedGarment = formattedGarment;
+            state.customGarmentData = null;
+            state.isOutfitVerified = true;
+            window.selectedOutfit = formattedGarment;
+
+            if (window.tryonState) {
+                window.tryonState.selectedGarment = formattedGarment;
+                window.tryonState.customGarmentData = null;
+                window.tryonState.isOutfitVerified = true;
+                window.tryonState.activeCategoryShortcut = formattedGarment.category || 'all';
+            }
+
+            try { localStorage.setItem('style360_pending_garment', JSON.stringify(formattedGarment)); } catch(e) {}
+
+            // Update UI Selected Garment Card
+            var previewCard = document.getElementById('selected-outfit-preview-card');
+            var placeholder = document.getElementById('no-outfit-placeholder');
+            var cardStep2 = document.getElementById('card-step-2');
+
+            if (previewCard) {
+                var existingRow = previewCard.querySelector('.selected-garment-row');
+                if (existingRow) existingRow.remove();
+
+                var row = document.createElement('div');
+                row.className = 'selected-garment-row';
+                row.innerHTML =
+                    '<img class="selected-garment-thumb" src="' + (formattedGarment.img || fallbackImg) + '" alt="' + (formattedGarment.name || '') + '" onerror="if(!this.dataset.fallback){this.dataset.fallback=\'1\';this.src=\'' + fallbackImg + '\';}" />' +
+                    '<div class="selected-garment-info">' +
+                        '<div class="selected-garment-name">' + (formattedGarment.name || 'Selected Outfit') + '</div>' +
+                        '<span class="selected-garment-cat-tag">' + (formattedGarment.categoryLabel || '') + '</span>' +
+                    '</div>';
+                previewCard.appendChild(row);
+                previewCard.classList.remove('input-error-highlight');
+            }
+            if (placeholder) placeholder.style.display = 'none';
+            if (cardStep2) cardStep2.classList.remove('input-error-highlight');
+
+            self.checkGatekeeper();
         },
 
         // Verify catalog garment selection against active Step 1 model gender

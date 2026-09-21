@@ -43,22 +43,34 @@ else                                  $resolvedGender = 'any';
 
 // ── 1. Fetch Inventory from DB — Split by Gender ──────────────────────────────
 require_once __DIR__ . '/database.php';
-$maleLines   = [];
-$femaleLines = [];
+$maleLines     = [];
+$femaleLines   = [];
+$allItems      = [];
 $garmentLookup = [];
+
+$catLabels = [
+    'western'     => 'Western',
+    'bridal'      => 'Bridal & Formal',
+    'casual'      => 'Casual',
+    'suits'       => 'Suits & Blazers',
+    'indian'      => 'Indian / Ethnic',
+    'traditional' => 'Traditional / Cultural'
+];
 
 if ($conn) {
     try {
         $stmt = $conn->query(
-            "SELECT id, title, gender, category, category_label, display_image_url, fal_image_url
+            "SELECT id, title, gender, category, display_image_url, fal_image_url
              FROM garment WHERE status = 'active' ORDER BY id ASC LIMIT 50"
         );
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $g) {
             $gRaw   = strtolower(trim($g['gender'] ?? 'unisex'));
-            $cLabel = $g['category_label'] ?: ucfirst($g['category'] ?? '');
+            $cLabel = $catLabels[strtolower($g['category'] ?? '')] ?? ucfirst($g['category'] ?? '');
+            $g['category_label'] = $cLabel;
             $line   = "- ID {$g['id']}: {$g['title']} (Category: {$cLabel})";
 
             $garmentLookup[$g['id']] = $g;
+            $allItems[] = $g;
 
             if ($gRaw === 'male')        $maleLines[]   = $line;
             elseif ($gRaw === 'female')  $femaleLines[] = $line;
@@ -168,6 +180,19 @@ if (empty($reply)) {
     }
 }
 
+// Helper to sanitize image URL for client
+function sanitizeDisplayUrl($url) {
+    if (empty($url)) return 'images/cat_wedding_men.png';
+    if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0 || strpos($url, 'data:image') === 0) {
+        return $url;
+    }
+    $clean = ltrim($url, '/');
+    if (strpos($clean, 'uploads/') === 0) {
+        return '/' . $clean;
+    }
+    return $clean;
+}
+
 // ── 5. Extract garment IDs from AI reply → build Try On cards ────────────────
 $recommendations = [];
 if (!empty($reply) && !empty($garmentLookup)) {
@@ -182,13 +207,45 @@ if (!empty($reply) && !empty($garmentLookup)) {
         if ($resolvedGender === 'male'   && $gGender === 'female') continue;
         if ($resolvedGender === 'female' && $gGender === 'male')   continue;
 
+        $displayImg = sanitizeDisplayUrl($g['display_image_url']);
         $recommendations[] = [
-            "id"                => $g['id'],
+            "id"                => (int)$g['id'],
             "title"             => $g['title'],
-            "display_image_url" => $g['display_image_url'] ?: '',
-            "fal_image_url"     => $g['fal_image_url'] ?: ($g['display_image_url'] ?: ''),
+            "name"              => $g['title'],
+            "gender"            => ucfirst($g['gender'] ?? 'unisex'),
+            "display_image_url" => $displayImg,
+            "fal_image_url"     => $g['fal_image_url'] ?: $displayImg,
+            "img"               => $displayImg,
             "category"          => $g['category_label'] ?: $g['category'],
+            "category_label"    => $g['category_label'] ?: $g['category'],
             "reason"            => "Recommended by Style360 AI Stylist",
+        ];
+    }
+}
+
+// If no IDs were specifically matched in the text, offer curated items from the matching inventory
+if (empty($recommendations) && !empty($allItems)) {
+    $targetGender = ($resolvedGender === 'female') ? 'female' : (($resolvedGender === 'male') ? 'male' : 'all');
+    $pool = array_filter($allItems, function ($g) use ($targetGender) {
+        if ($targetGender === 'all') return true;
+        $gg = strtolower($g['gender'] ?? 'unisex');
+        return ($gg === $targetGender || $gg === 'unisex');
+    });
+    if (empty($pool)) $pool = $allItems;
+
+    foreach (array_slice(array_values($pool), 0, 3) as $g) {
+        $displayImg = sanitizeDisplayUrl($g['display_image_url']);
+        $recommendations[] = [
+            "id"                => (int)$g['id'],
+            "title"             => $g['title'],
+            "name"              => $g['title'],
+            "gender"            => ucfirst($g['gender'] ?? 'unisex'),
+            "display_image_url" => $displayImg,
+            "fal_image_url"     => $g['fal_image_url'] ?: $displayImg,
+            "img"               => $displayImg,
+            "category"          => $g['category_label'] ?: $g['category'],
+            "category_label"    => $g['category_label'] ?: $g['category'],
+            "reason"            => "Curated Style360 outfit matching your search.",
         ];
     }
 }

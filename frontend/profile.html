@@ -12,7 +12,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css?v=22" />
-    <link rel="stylesheet" href="css/home.css?v=9" />
+    <link rel="stylesheet" href="css/home.css?v=10" />
 
     <script>
         (function () {
@@ -282,11 +282,12 @@
                 <img src="images/user_logo.jpeg" alt="Style360 Logo" style="height: 105px; max-height: 115px; width: auto; object-fit: contain; display: block;" />
             </a>
 
-            <nav class="main-nav" id="main-nav">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="index.html#tryon" class="nav-link">Try On</a>
-                <a href="my-3d-models.html" class="nav-link nav-link-studio" id="nav-studio-link">My 3D Models</a>
-            </nav>
+            <div class="header-nav-center">
+                <a href="index.html#tryon" class="cat-back-btn cat-back-tryon-btn" id="btn-header-back-tryon" title="Return to Virtual Try-On Studio">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+                    <span>Back to Try-On Studio</span>
+                </a>
+            </div>
 
             <div class="header-actions">
                 <!-- Auth Action Buttons (Visible for Guests) -->
@@ -309,6 +310,10 @@
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
+                        <a href="index.html#tryon" class="dropdown-item" id="drop-tryon-link">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <span>Virtual Try-On Studio</span>
+                        </a>
                         <a href="profile.html" class="dropdown-item active" style="background:#F5F3FF; color:#7C3AED;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span>Edit Profile</span>
@@ -430,7 +435,6 @@
 
     </main>
 
-    <script src="js/user-nav.js?v=52"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var user = window.Style360Auth ? window.Style360Auth.getCurrentUser() : null;
@@ -522,7 +526,7 @@
         });
     </script>
     <script src="js/auth.js?v=1"></script>
-    <script src="js/user-nav.js?v=53"></script>
+    <script src="js/user-nav.js?v=55"></script>
     <script src="js/main.js?v=1"></script>
 </body>
 </html>

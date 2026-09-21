@@ -58,7 +58,7 @@ async function detectGender(reqFilePath) {
     const prompt = 'Analyze this image carefully. It may depict either a human person or an apparel/clothing/fashion item. Determine: 1. Target gender: Is this subject or outfit intended for a "male" (man/boy/men\'s fashion) or "female" (woman/girl/women\'s fashion)? 2. What is the subject: "person" or "clothing"? Return ONLY a valid JSON object without markdown fences: {"detected_gender": "male"|"female"|"unknown", "item_type": "person"|"clothing"|"other", "confidence": 0.95, "is_person": true, "summary": "brief description"}';
 
     let lastError = '';
-    const models = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-lite-latest'];
+    const models = ['gemini-flash-lite-latest', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash'];
     for (const m of models) {
         try {
             const res = await ai.models.generateContent({

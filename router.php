@@ -42,7 +42,7 @@ if ($cleanUri === '/3d-studio' || $cleanUri === '/3d-studio.html') {
     $cleanUri = '/frontend/my-3d-models.html';
 }
 
-if ($cleanUri === '/my-3d-models' || $cleanUri === '/my-3d-models.html') {
+if ($cleanUri === '/my-3d-models' || $cleanUri === '/my-3d-models.html' || $cleanUri === '/frontend/my 3d models.html' || $cleanUri === '/frontend/my%203d%20models.html' || $cleanUri === '/my 3d models.html') {
     $cleanUri = '/frontend/my-3d-models.html';
 }
 
@@ -128,6 +128,11 @@ if ($cleanUri === '/api/logout' || $cleanUri === '/api/logout/' || $cleanUri ===
 if ($cleanUri === '/admin-requests' || $cleanUri === '/admin-requests.php') {
     require __DIR__ . '/admin-requests.php';
     exit;
+}
+
+// Clean up /frontend/uploads/ if requested from inside frontend pages
+if (strpos($cleanUri, '/frontend/uploads/') === 0) {
+    $cleanUri = substr($cleanUri, 9);
 }
 
 // 2. Candidate file paths to check

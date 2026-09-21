@@ -42,12 +42,11 @@
         var title = (m.title || '').toLowerCase();
         var glb = (m.glb_url || m.model_file || m.raw_model_url || '').toLowerCase().trim();
 
-        // 1. Remove hardcoded dummy placeholder cards
-        if (title.indexOf('vintage lace blouse') !== -1 ||
-            title.indexOf('blue groom suit') !== -1 ||
-            title.indexOf('sampleman') !== -1 ||
+        // 1. Remove mock/dummy placeholder cards
+        if (title.indexOf('sampleman') !== -1 ||
             title.indexOf('dummy') !== -1 ||
-            title.indexOf('mock') !== -1) {
+            title.indexOf('mock model') !== -1 ||
+            title.indexOf('mock avatar') !== -1) {
             return true;
         }
 
@@ -175,7 +174,7 @@
                         'touch-action="pan-y" ' +
                         'shadow-intensity="1.2" ' +
                         'shadow-softness="0.75" ' +
-                        'exposure="1.05" ' +
+                        'exposure="0.92" ' +
                         'rotation-per-second="25deg" ' +
                         'interaction-prompt="auto">' +
                     '</model-viewer>' +
@@ -195,15 +194,11 @@
                     '</div>' +
                 '</div>';
 
-            // Attach model-viewer load error guard: remove broken card completely if loading fails
+            // Attach model-viewer load error guard
             var mv = card.querySelector('model-viewer');
             if (mv) {
-                mv.addEventListener('error', function () {
-                    console.warn('[Style360 3D] Failed to load 3D mesh for card:', glbPath);
-                    card.remove();
-                    if (modelsGrid.children.length === 0) {
-                        renderModelsGrid();
-                    }
+                mv.addEventListener('error', function (err) {
+                    console.warn('[Style360 3D] Failed to load 3D mesh for card:', glbPath, err);
                 });
             }
 
@@ -348,8 +343,8 @@
         modalViewer.src = glbPath;
         modalViewer.cameraOrbit = '0deg 75deg auto';
         modalViewer.cameraTarget = 'auto auto auto';
-        modalViewer.exposure = 1.1;
-        modalViewer.shadowIntensity = 1.5;
+        modalViewer.exposure = 0.92;
+        modalViewer.shadowIntensity = 1.3;
         modalViewer.autoRotate = true;
         if (modalBtnSpin) modalBtnSpin.textContent = '⏸ Pause';
 
@@ -418,28 +413,30 @@
         });
     }
 
+    // Modal Lighting Preset Switcher
     modalLightPills.forEach(function (pill) {
         pill.addEventListener('click', function () {
             modalLightPills.forEach(function (p) { p.classList.remove('active'); });
             pill.classList.add('active');
+
             var mode = pill.getAttribute('data-light');
             if (!modalViewer) return;
             switch (mode) {
                 case 'warm':
-                    modalViewer.exposure = 1.25;
-                    modalViewer.shadowIntensity = 1.2;
+                    modalViewer.exposure = 1.02;
+                    modalViewer.shadowIntensity = 1.1;
                     break;
                 case 'dramatic':
-                    modalViewer.exposure = 0.76;
-                    modalViewer.shadowIntensity = 2.2;
+                    modalViewer.exposure = 0.72;
+                    modalViewer.shadowIntensity = 2.0;
                     break;
                 case 'bright':
-                    modalViewer.exposure = 1.45;
-                    modalViewer.shadowIntensity = 0.85;
+                    modalViewer.exposure = 1.10;
+                    modalViewer.shadowIntensity = 0.9;
                     break;
                 default: // studio
-                    modalViewer.exposure = 1.1;
-                    modalViewer.shadowIntensity = 1.5;
+                    modalViewer.exposure = 0.92;
+                    modalViewer.shadowIntensity = 1.3;
                     break;
             }
         });

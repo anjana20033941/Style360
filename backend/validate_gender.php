@@ -172,7 +172,7 @@ $confidence     = 0.0;
 $usedModel      = '';
 
 if ($apiKey) {
-    $models = ['gemini-3.6-flash', 'gemini-3.5-flash'];
+    $models = ['gemini-flash-lite-latest', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash'];
     $prompt = "Is this person or clothing outfit intended for male or female? Answer with strictly one single word: male or female.";
 
     foreach ($models as $m) {
@@ -234,8 +234,8 @@ if ($apiKey) {
 
 // ─── Fast Graceful Fallback if REST failed (Avoid long blocking delays) ───
 if ($detectedGender === 'unknown') {
-    $detectedGender = !empty($expectedGender) ? $expectedGender : 'male';
-    $confidence = 0.85;
+    $detectedGender = !empty($expectedGender) ? $expectedGender : 'unknown';
+    $confidence = !empty($expectedGender) ? 0.85 : 0.50;
     $usedModel = 'fast_fallback';
 }
 

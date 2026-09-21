@@ -151,7 +151,7 @@ Return ONLY a valid raw JSON object without markdown formatting, code fences or 
   "nsfw_reason": ""
 }';
 
-    $models = ['gemini-3.6-flash', 'gemini-3.5-flash'];
+    $models = ['gemini-flash-lite-latest', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash'];
     foreach ($models as $m) {
         $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$m}:generateContent?key=" . urlencode($apiKey);
         $payload = [

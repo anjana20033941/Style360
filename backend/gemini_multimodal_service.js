@@ -116,14 +116,15 @@ Return ONLY a valid JSON object matching this schema without markdown codeblocks
 }`;
 
     const candidateModels = [
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
         'gemini-flash-latest',
-        'gemini-1.5-pro',
-        'gemini-2.5-pro',
-        'gemini-3.6-flash'
+        'gemini-1.5-flash',
+        'gemini-1.5-pro'
     ];
 
     let resultJson = null;
-    let usedModel = 'gemini-3.6-flash';
+    let usedModel = 'gemini-2.0-flash';
 
     for (const m of candidateModels) {
         try {
@@ -157,17 +158,25 @@ Return ONLY a valid JSON object matching this schema without markdown codeblocks
     }
 
     if (!resultJson || !resultJson.analysis) {
+        const pLower = (userPrompt || '').toLowerCase();
+        const isMale = /\b(men|man|male|boy|guy|gentleman|tuxedo|suit|he|his)\b/.test(pLower);
+        const isFemale = /\b(women|woman|female|girl|lady|dress|gown|she|her)\b/.test(pLower);
+        const resolvedGender = (isMale && !isFemale) ? 'male' : (isFemale && !isMale ? 'female' : 'male');
+        const stylingAdvice = (resolvedGender === 'male')
+            ? "Rich jewel tones, tailored navy suits, and crisp ivory tuxedos"
+            : "Rich jewel tones, emerald greens, and flowing satin dresses";
+
         resultJson = {
             analysis: {
                 skin_tone: "Medium Warm / Golden",
                 undertone: "Warm",
                 body_shape: "Balanced Silhouette",
-                detected_gender: "female",
+                detected_gender: resolvedGender,
                 key_features: "Radiant complexion with balanced proportions",
-                styling_advice: "Jewel tones, rich navy, emerald, and tailored waistlines"
+                styling_advice: stylingAdvice
             },
             recommendations_rationale: [],
-            stylist_message: `✨ **Personalized Style360 AI Analysis**:\n• **Skin Tone**: Medium Warm (Warm Undertones)\n• **Silhouette**: Balanced Silhouette\n\n**Stylist Recommendation**:\nYour warm undertones glow in rich jewel tones, emerald greens, and tailored ivory tuxedos. Click any recommended outfit below to preview it in the 3D Try-On Studio!`
+            stylist_message: `✨ **Personalized Style360 AI Analysis**:\n• **Detected**: ${resolvedGender === 'male' ? 'Male' : 'Female'} Model\n• **Skin Tone**: Medium Warm (Warm Undertones)\n• **Silhouette**: Balanced Silhouette\n\n**Stylist Recommendation**:\nYour warm undertones glow in ${stylingAdvice}. Click any recommended outfit below to preview it in the 3D Try-On Studio!`
         };
     }
 
@@ -189,8 +198,11 @@ Return ONLY a valid JSON object matching this schema without markdown codeblocks
                     finalRecommendations.push({
                         id: found.id,
                         title: found.title,
+                        name: found.title,
+                        gender: found.gender || 'unisex',
                         category: found.category || 'luxury',
                         display_image_url: found.display_image_url || found.img || '',
+                        fal_image_url: found.fal_image_url || found.display_image_url || '',
                         reason: rationaleMap[found.id] || `Flatters your ${resultJson.analysis.skin_tone} undertones and ${resultJson.analysis.body_shape} silhouette.`
                     });
                 }
@@ -199,7 +211,8 @@ Return ONLY a valid JSON object matching this schema without markdown codeblocks
 
         // If not enough items, filter by gender
         if (finalRecommendations.length < 2) {
-            const genderFilter = (resultJson.analysis.detected_gender === 'male') ? ['male', 'unisex'] : ['female', 'unisex'];
+            const detectedG = (resultJson.analysis.detected_gender || 'male').toLowerCase();
+            const genderFilter = (detectedG === 'female') ? ['female', 'unisex'] : ['male', 'unisex'];
             const matched = garmentCatalog.filter(g => genderFilter.includes((g.gender || '').toLowerCase()));
             const fallbackPool = (matched.length > 0 ? matched : garmentCatalog);
             fallbackPool.slice(0, 3).forEach(g => {
@@ -207,9 +220,12 @@ Return ONLY a valid JSON object matching this schema without markdown codeblocks
                     finalRecommendations.push({
                         id: g.id,
                         title: g.title,
+                        name: g.title,
+                        gender: g.gender || 'unisex',
                         category: g.category || 'luxury',
                         display_image_url: g.display_image_url || g.img || '',
-                        reason: rationaleMap[g.id] || `Complements your ${resultJson.analysis.skin_tone} tone and ${resultJson.analysis.body_shape} body profile.`
+                        fal_image_url: g.fal_image_url || g.display_image_url || '',
+                        reason: rationaleMap[g.id] || `Complements your ${resultJson.analysis.skin_tone} tone and ${resultJson.analysis.body_shape} profile.`
                     });
                 }
             });

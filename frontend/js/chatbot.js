@@ -24,6 +24,7 @@
     var isAiResponding   = false;
     var selectedImageDataUrl = null;
     var selectedFileObj  = null;
+    var lastUploadedUserPhoto = null;
 
     // Helper: format rich markdown from Gemini AI (bold, bullets, lists, headings) to HTML
     function formatMessageText(text) {
@@ -36,6 +37,36 @@
             .replace(/\n\n/g, '<div style="height:6px;"></div>')
             .replace(/\n/g, '<br/>');
         return formatted;
+    }
+
+    // Helper: format garment image URL to ensure proper path resolution from any page depth
+    function formatGarmentImageUrl(url) {
+        if (!url || typeof url !== 'string') return 'images/cat_wedding_men.png';
+        url = url.trim();
+        if (!url || url === 'null' || url === 'undefined') return 'images/cat_wedding_men.png';
+        if (url.indexOf('http://') === 0 || url.indexOf('https://') === 0 || url.indexOf('data:') === 0) {
+            return url;
+        }
+
+        var clean = url.replace(/^\/+/, '');
+        var prefix = (window.location.pathname.indexOf('/style360') === 0) ? '/style360' : '';
+
+        // If it points to uploaded garment files (uploads/display/... or uploads/fal/...)
+        if (clean.indexOf('uploads/') === 0) {
+            return prefix ? (prefix + '/' + clean) : ('/' + clean);
+        }
+
+        // If it starts with frontend/images/
+        if (clean.indexOf('frontend/images/') === 0) {
+            return clean.substring(9);
+        }
+
+        // If it's a static image in images/
+        if (clean.indexOf('images/') === 0) {
+            return clean;
+        }
+
+        return prefix ? (prefix + '/' + clean) : ('/' + clean);
     }
 
     // Helper: Append a message to the chat body (with optional image and recommendation cards)
@@ -74,10 +105,14 @@
                 var card = document.createElement('div');
                 card.className = 'chat-garment-card';
 
-                var imgUrl = g.display_image_url || g.img || 'images/cat_western_men.png';
+                var isFemale = (g.gender && String(g.gender).toLowerCase() === 'female');
+                var fallbackImg = isFemale ? 'images/cat_wedding_women.png' : 'images/cat_wedding_men.png';
+                var rawImg = g.display_image_url || g.img || fallbackImg;
+                var imgUrl = formatGarmentImageUrl(rawImg);
+                var safeTitle = String(g.title || 'Curated Outfit').replace(/"/g, '&quot;');
 
                 card.innerHTML = 
-                    '<img src="' + imgUrl + '" alt="' + (g.title || 'Outfit') + '" class="chat-garment-img" />' +
+                    '<img src="' + imgUrl + '" alt="' + safeTitle + '" class="chat-garment-img" onerror="if(!this.dataset.fallback){this.dataset.fallback=\'1\';this.src=\'' + fallbackImg + '\';}" />' +
                     '<div class="chat-garment-info">' +
                         '<div class="chat-garment-name">' + (g.title || 'Curated Outfit') + '</div>' +
                         '<div class="chat-garment-rationale">' + (g.reason || 'Complements your skin tone and proportions.') + '</div>' +
@@ -112,23 +147,52 @@
 
     // Direct Try-On trigger from chat recommendation card
     function handleTryOnShortcut(garment) {
-        var tryonSec = document.getElementById('tryon') || document.querySelector('.tryon-studio-section');
-        if (tryonSec) {
-            tryonSec.scrollIntoView({ behavior: 'smooth' });
+        if (!garment) return;
+
+        // Retrieve photo uploaded by user in chat (if any)
+        var userPhoto = lastUploadedUserPhoto || window._lastChatbotUserPhoto || null;
+
+        // 1. Sync User Photo to StudioController & tryonState
+        if (userPhoto) {
+            if (window.tryonState) {
+                window.tryonState.userPhotoData = userPhoto;
+                window.tryonState.isPhotoVerified = true;
+            }
+            if (window.StudioController && typeof window.StudioController.setUserPhoto === 'function') {
+                window.StudioController.setUserPhoto(userPhoto, garment.gender);
+            }
         }
 
-        // If global select garment function exists in home.js / app.js
-        if (window.selectGarmentById && garment.id) {
-            window.selectGarmentById(garment.id);
+        // 2. Select Garment in Studio and ensure Try-On UI renders
+        if (window.selectGarmentById) {
+            window.selectGarmentById(garment, userPhoto);
+        } else if (window.StudioController && typeof window.StudioController.selectGarment === 'function') {
+            window.StudioController.selectGarment(garment);
+            if (window.showTryOnPage) {
+                window.showTryOnPage();
+            } else if (window.Style360Home && typeof window.Style360Home.showTryOnPage === 'function') {
+                window.Style360Home.showTryOnPage();
+            }
         } else if (window.tryonState) {
             window.tryonState.selectedGarment = garment;
-            var label = document.getElementById('stage-current-outfit-cat');
-            if (label) label.textContent = garment.title || 'Selected Outfit';
+            window.tryonState.isOutfitVerified = true;
+            window.selectedOutfit = garment;
+            if (window.showTryOnPage) {
+                window.showTryOnPage();
+            } else if (window.Style360Home && typeof window.Style360Home.showTryOnPage === 'function') {
+                window.Style360Home.showTryOnPage();
+            }
         }
 
-        // Minimize chat panel for better view of studio
+        // 3. Minimize / close chat panel for clear view of studio
         if (chatPanel) {
             chatPanel.classList.remove('open');
+        }
+
+        // 4. Ensure Try-On section is in view
+        var tryonSec = document.getElementById('tryon-dedicated-section') || document.getElementById('tryon') || document.querySelector('.tryon-studio-section');
+        if (tryonSec) {
+            tryonSec.scrollIntoView({ behavior: 'smooth' });
         }
     }
 
@@ -204,6 +268,8 @@
             var reader = new FileReader();
             reader.onload = function (evt) {
                 selectedImageDataUrl = evt.target.result;
+                lastUploadedUserPhoto = selectedImageDataUrl;
+                window._lastChatbotUserPhoto = selectedImageDataUrl;
                 if (uploadThumbnail) uploadThumbnail.src = selectedImageDataUrl;
                 if (uploadPreviewBar) uploadPreviewBar.style.display = 'flex';
                 if (btnUploadImg) btnUploadImg.classList.add('active');
@@ -230,6 +296,11 @@
 
         var imgToSend = selectedImageDataUrl;
         var fileToSend = selectedFileObj;
+
+        if (imgToSend) {
+            lastUploadedUserPhoto = imgToSend;
+            window._lastChatbotUserPhoto = imgToSend;
+        }
 
         // Display user message with image preview if present
         appendMessage('user', text || (hasImage ? 'Please analyze my photo for outfit styling' : ''), imgToSend, null);
@@ -296,7 +367,8 @@
                 removeTypingIndicator();
                 isAiResponding = false;
                 var reply = (data && data.reply) ? data.reply : "Feel free to explore our virtual try-on studio!";
-                appendMessage('ai', reply, null, null);
+                var recommendations = (data && data.recommendations) ? data.recommendations : null;
+                appendMessage('ai', reply, null, recommendations);
             })
             .catch(function (err) {
                 console.error('[AI Stylist] Error:', err);

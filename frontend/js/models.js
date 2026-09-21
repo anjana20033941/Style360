@@ -44,12 +44,11 @@
         var title = (m.title || '').toLowerCase();
         var glb = (m.glb_url || m.model_file || m.raw_model_url || '').toLowerCase().trim();
 
-        // 1. Remove hardcoded dummy placeholder cards
-        if (title.indexOf('vintage lace blouse') !== -1 ||
-            title.indexOf('blue groom suit') !== -1 ||
-            title.indexOf('sampleman') !== -1 ||
+        // 1. Remove mock/dummy placeholder cards
+        if (title.indexOf('sampleman') !== -1 ||
             title.indexOf('dummy') !== -1 ||
-            title.indexOf('mock') !== -1) {
+            title.indexOf('mock model') !== -1 ||
+            title.indexOf('mock avatar') !== -1) {
             return true;
         }
 

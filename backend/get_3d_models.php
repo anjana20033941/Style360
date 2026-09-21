@@ -55,14 +55,14 @@ try {
 
 // 2. User Resolution via Session and Request Parameter
 $currentUserId = 0;
-if (!empty($_SESSION['user_id'])) {
-    $currentUserId = (int)$_SESSION['user_id'];
-} elseif (!empty($_GET['user_id'])) {
+if (!empty($_GET['user_id'])) {
     $currentUserId = (int)$_GET['user_id'];
     $_SESSION['user_id'] = $currentUserId;
 } elseif (!empty($_POST['user_id'])) {
     $currentUserId = (int)$_POST['user_id'];
     $_SESSION['user_id'] = $currentUserId;
+} elseif (!empty($_SESSION['user_id'])) {
+    $currentUserId = (int)$_SESSION['user_id'];
 }
 
 try {
@@ -184,9 +184,6 @@ try {
 
             $seenUrls[$glbUrl] = true;
             $garmentTitle = trim($r['garment_title'] ?? '');
-            if (stripos($garmentTitle, 'Vintage Lace Blouse') !== false || stripos($garmentTitle, 'Blue Groom Suit') !== false) {
-                continue;
-            }
 
             $cat = !empty($r['garment_category']) ? strtolower(trim($r['garment_category'])) : 'western';
             $title = !empty($garmentTitle) ? ($garmentTitle . ' (3D Mesh)') : ('Personalized 3D Model #' . $r['id']);

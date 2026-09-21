@@ -951,12 +951,50 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     flex-shrink: 0;
+    text-decoration: none;
 }
 
 .cat-back-btn:hover {
     background: #7C3AED;
     border-color: #7C3AED;
     color: white;
+}
+
+.cat-back-tryon-btn {
+    background: linear-gradient(135deg, #7C3AED, #6366F1) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.28) !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+.cat-back-tryon-btn:hover {
+    background: linear-gradient(135deg, #6D28D9, #4F46E5) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.42) !important;
+    color: #FFFFFF !important;
+}
+
+.cat-back-tryon-btn:active {
+    transform: translateY(0);
+}
+
+.header-nav-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+@media (max-width: 680px) {
+    .header-nav-center .cat-back-tryon-btn span {
+        display: none;
+    }
+    .header-nav-center .cat-back-tryon-btn {
+        padding: 0.5rem 0.65rem;
+        border-radius: 50px;
+    }
 }
 
 .cat-browse-title-wrap {

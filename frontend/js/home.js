@@ -57,6 +57,7 @@
     var btnGetStarted      = document.getElementById('btn-get-started');
     var btnShopNow         = document.getElementById('btn-shop-now');
     var btnCatBack         = document.getElementById('btn-cat-back');
+    var btnCatBackTryon    = document.getElementById('btn-cat-back-tryon');
 
     var btnSwitchWomen     = document.getElementById('btn-switch-women');
     var btnSwitchMen       = document.getElementById('btn-switch-men');
@@ -566,9 +567,38 @@
         });
     }
 
-    // Global helper for AI Chatbot to select and preview garments in Studio
-    window.selectGarmentById = function (garmentId) {
-        var found = ALL_GARMENTS.find(function (g) { return String(g.id) === String(garmentId); });
+    // Global helper for AI Chatbot and external modules to select and preview garments in Studio
+    window.selectGarmentById = function (garmentOrId, optionalUserPhoto) {
+        var found = null;
+        if (garmentOrId && typeof garmentOrId === 'object') {
+            found = garmentOrId;
+        } else if (ALL_GARMENTS && ALL_GARMENTS.length > 0) {
+            found = ALL_GARMENTS.find(function (g) { return String(g.id) === String(garmentOrId); });
+        }
+
+        if (!found && garmentOrId) {
+            found = {
+                id: garmentOrId,
+                title: 'Selected Outfit',
+                name: 'Selected Outfit',
+                gender: 'Unisex',
+                category: 'all',
+                categoryLabel: 'Outfit'
+            };
+        }
+
+        if (optionalUserPhoto) {
+            tryonState.userPhotoData = optionalUserPhoto;
+            tryonState.isPhotoVerified = true;
+            if (window.tryonState) {
+                window.tryonState.userPhotoData = optionalUserPhoto;
+                window.tryonState.isPhotoVerified = true;
+            }
+            if (window.StudioController && typeof window.StudioController.setUserPhoto === 'function') {
+                window.StudioController.setUserPhoto(optionalUserPhoto, found ? found.gender : null);
+            }
+        }
+
         if (found) {
             var modelGender = (window.StudioController && typeof window.StudioController.getModelGender === 'function')
                 ? window.StudioController.getModelGender()
@@ -584,13 +614,56 @@
                 return false; // BLOCK SELECTION
             }
 
-            tryonState.selectedGarment = found;
+            var rawImg = found.display_image_url || found.img || '';
+            var resolvedImg = rawImg;
+            if (resolvedImg && resolvedImg.indexOf('http') !== 0 && resolvedImg.indexOf('data:') !== 0) {
+                var cleanImg = resolvedImg.replace(/^\/+/, '');
+                var pfx = (window.location.pathname.indexOf('/style360') === 0) ? '/style360' : '';
+                if (cleanImg.indexOf('uploads/') === 0) {
+                    resolvedImg = pfx ? (pfx + '/' + cleanImg) : ('/' + cleanImg);
+                } else if (cleanImg.indexOf('images/') === 0) {
+                    resolvedImg = cleanImg;
+                } else {
+                    resolvedImg = pfx ? (pfx + '/' + cleanImg) : ('/' + cleanImg);
+                }
+            }
+
+            var isFem = (found.gender && String(found.gender).toLowerCase() === 'female') || (gGender === 'Female');
+            var fallbackImg = isFem ? 'images/cat_wedding_women.png' : 'images/cat_wedding_men.png';
+            if (!resolvedImg) resolvedImg = fallbackImg;
+
+            var g = {
+                id: found.id,
+                title: found.title || found.name || 'Selected Outfit',
+                name: found.name || found.title || 'Selected Outfit',
+                gender: found.gender || gGender || 'Unisex',
+                category: found.category || 'all',
+                categoryLabel: found.category_label || found.categoryLabel || found.category || 'Outfit',
+                desc: found.desc || (found.category ? (found.category + ' Collection') : 'Curated Outfit'),
+                img: resolvedImg,
+                display_image_url: resolvedImg,
+                fal_image_url: found.fal_image_url || found.display_image_url || resolvedImg
+            };
+
+            tryonState.selectedGarment = g;
             tryonState.isOutfitVerified = true;
-            window.selectedOutfit = found;
+            window.selectedOutfit = g;
             tryonState.customGarmentData = null;
-            tryonState.activeCategoryShortcut = found.category || 'all';
-            try { localStorage.setItem('style360_pending_garment', JSON.stringify(found)); } catch(e) {}
+            tryonState.activeCategoryShortcut = g.category || 'all';
+
+            if (window.tryonState) {
+                window.tryonState.selectedGarment = g;
+                window.tryonState.isOutfitVerified = true;
+                window.tryonState.customGarmentData = null;
+                window.tryonState.activeCategoryShortcut = g.category || 'all';
+            }
+
+            try { localStorage.setItem('style360_pending_garment', JSON.stringify(g)); } catch(e) {}
             showTryOnPage();
+
+            if (window.StudioController && typeof window.StudioController.selectGarment === 'function') {
+                window.StudioController.selectGarment(g);
+            }
             if (window.StudioController && typeof window.StudioController.checkGatekeeper === 'function') {
                 window.StudioController.checkGatekeeper();
             }
@@ -698,6 +771,13 @@
         var photoPreviewImg    = document.getElementById('tryon-user-preview-img');
         var photoEmptyState    = document.getElementById('tryon-user-empty-state');
         var btnRemovePhoto     = document.getElementById('btn-remove-user-photo');
+
+        // Restore user photo if already in tryonState (e.g. from AI Stylist Chatbot)
+        if (tryonState.userPhotoData) {
+            if (photoPreviewImg) photoPreviewImg.src = tryonState.userPhotoData;
+            if (photoPreviewWrap) photoPreviewWrap.style.display = 'inline-block';
+            if (photoEmptyState) photoEmptyState.style.display = 'none';
+        }
 
         var btnMale            = document.getElementById('tryon-gender-male');
         var btnFemale          = document.getElementById('tryon-gender-female');
@@ -1007,10 +1087,13 @@
             var existingRow = previewCard.querySelector('.selected-garment-row');
             if (existingRow) existingRow.remove();
 
+            var isFemThumb = (g.gender && String(g.gender).toLowerCase() === 'female');
+            var thumbFallback = isFemThumb ? 'images/cat_wedding_women.png' : 'images/cat_wedding_men.png';
+
             var row = document.createElement('div');
             row.className = 'selected-garment-row';
             row.innerHTML =
-                '<img class="selected-garment-thumb" src="' + (g.img || g.display_image_url || '') + '" alt="' + (g.name || '') + '" />' +
+                '<img class="selected-garment-thumb" src="' + (g.img || g.display_image_url || thumbFallback) + '" alt="' + (g.name || '') + '" onerror="if(!this.dataset.fallback){this.dataset.fallback=\'1\';this.src=\'' + thumbFallback + '\';}" />' +
                 '<div class="selected-garment-info">' +
                     '<div class="selected-garment-name">' + (g.name || 'Selected Outfit') + '</div>' +
                     '<span class="selected-garment-cat-tag">' + (g.categoryLabel || g.category || '') + '</span>' +
@@ -2266,6 +2349,10 @@
     });
 
     btnCatBack && btnCatBack.addEventListener('click', function () { showHome(); });
+    btnCatBackTryon && btnCatBackTryon.addEventListener('click', function (e) {
+        if (e) e.preventDefault();
+        showTryOnPage();
+    });
 
     // Switcher Pills on Collection Page
     btnSwitchWomen && btnSwitchWomen.addEventListener('click', function () {
@@ -2378,27 +2465,45 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        // Preload garments from DB
-        loadGarmentsFromDatabase(function () {
-            if (!homePage) return;
+    function initRoute() {
+        if (!homePage) return;
 
-            var loaded3D = checkAndLoadStored3DModel();
-            if (loaded3D) return;
+        // Clean up preload CSS classes once routing executes
+        try {
+            document.documentElement.classList.remove('preload-tryon-active', 'preload-category-active', 'preload-studio-active');
+        } catch (e) {}
 
-            var hash = window.location.hash;
-            if (hash === '#studio-section' || hash === '#studio') {
-                showStudio();
-            } else if (hash === '#tryon-dedicated-section' || hash === '#tryon') {
-                showTryOnPage();
-            } else if (hash === '#category-section' || hash === '#women') {
-                showCategory('cat-wedding-women', 'all');
-            } else if (hash === '#men') {
-                showCategory('cat-wedding-men', 'all');
-            } else {
-                showHome();
-            }
+        var loaded3D = checkAndLoadStored3DModel();
+        if (loaded3D) return;
+
+        var hash = window.location.hash;
+        if (hash === '#studio-section' || hash === '#studio') {
+            showStudio();
+        } else if (hash === '#tryon-dedicated-section' || hash === '#tryon') {
+            showTryOnPage();
+        } else if (hash === '#category-section' || hash === '#women') {
+            showCategory('cat-wedding-women', 'all');
+        } else if (hash === '#men') {
+            showCategory('cat-wedding-men', 'all');
+        } else {
+            showHome();
+        }
+    }
+
+    // Route synchronously as soon as DOM is ready without waiting for network request
+    if (document.readyState === 'loading') {
+        document.addEventListener("DOMContentLoaded", function () {
+            initRoute();
+            loadGarmentsFromDatabase();
         });
+    } else {
+        initRoute();
+        loadGarmentsFromDatabase();
+    }
+
+    // Dynamic hash change listener (e.g. user clicks Try-On while on same page)
+    window.addEventListener('hashchange', function () {
+        initRoute();
     });
 
     // Expose Global API
@@ -2409,5 +2514,9 @@
         showTryOnPage: showTryOnPage,
         loadGarmentsFromDatabase: loadGarmentsFromDatabase
     };
+    window.showTryOnPage = showTryOnPage;
+    window.showCategory = showCategory;
+    window.showStudio = showStudio;
+    window.showHome = showHome;
 
 })();

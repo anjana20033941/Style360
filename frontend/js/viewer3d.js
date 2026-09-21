@@ -43,21 +43,21 @@
         if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
         if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.1;
+        renderer.toneMappingExposure = 0.88;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-        /* Scene: Clean studio light background & subtle infinite fog effect */
+        /* Scene: Balanced studio light background & subtle infinite fog effect */
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xf4f4f6);
-        scene.fog = new THREE.Fog(0xf4f4f6, 10, 30);
+        scene.background = new THREE.Color(0xe6e8ee);
+        scene.fog = new THREE.Fog(0xe6e8ee, 10, 32);
 
         /* Realistic Ground Plane receiving shadows */
         var groundGeo = new THREE.PlaneGeometry(100, 100);
         var groundMat = new THREE.MeshStandardMaterial({
-            color: 0xf4f4f6,
-            roughness: 0.92,
-            metalness: 0.04
+            color: 0xe6e8ee,
+            roughness: 0.95,
+            metalness: 0.02
         });
         var groundPlane = new THREE.Mesh(groundGeo, groundMat);
         groundPlane.rotation.x = -Math.PI / 2;
@@ -84,13 +84,13 @@
         controls.dampingFactor = 0.08;
         controls.update();
 
-        /* ─── Clean Studio Lighting Rig ─── */
-        // 1. Soft Studio Ambient Light
-        var ambient = new THREE.AmbientLight(0xffffff, 0.95);
+        /* ─── Balanced High-End Studio Lighting Rig ─── */
+        // 1. Soft Studio Ambient / Hemisphere Light (prevents blowout, provides soft depth)
+        var ambient = new THREE.HemisphereLight(0xffffff, 0x475569, 0.42);
         scene.add(ambient);
 
-        // 2. Primary Directional Key Light with realistic shadow casting
-        var keyLight = new THREE.DirectionalLight(0xffffff, 1.25);
+        // 2. Primary Directional Key Light with realistic soft shadows
+        var keyLight = new THREE.DirectionalLight(0xffffff, 0.82);
         keyLight.position.set(2.0, 4.2, 2.5);
         keyLight.castShadow = true;
         keyLight.shadow.mapSize.width = 2048;
@@ -101,17 +101,17 @@
         keyLight.shadow.camera.right = 2.5;
         keyLight.shadow.camera.top = 3.5;
         keyLight.shadow.camera.bottom = -1.0;
-        keyLight.shadow.bias = -0.0005;
+        keyLight.shadow.bias = -0.0004;
         scene.add(keyLight);
 
         // 3. Soft Studio Fill Light
-        var fillLight = new THREE.DirectionalLight(0xf1f5f9, 0.65);
+        var fillLight = new THREE.DirectionalLight(0xdbeafe, 0.32);
         fillLight.position.set(-2.5, 2.5, 2.0);
         scene.add(fillLight);
 
-        // 4. Subtle Studio Rim / Backlight
-        var rimLight = new THREE.DirectionalLight(0xffffff, 0.45);
-        rimLight.position.set(0, 3.0, -3.0);
+        // 4. Subtle Studio Rim / Contour Backlight
+        var rimLight = new THREE.DirectionalLight(0xfef3c7, 0.35);
+        rimLight.position.set(0, 3.2, -3.0);
         scene.add(rimLight);
 
         /* ─── PMREM environment map for realistic PBR shading ─── */
@@ -184,23 +184,23 @@
         if (podRingsGroup) scene.remove(podRingsGroup);
         podRingsGroup = new THREE.Group();
 
-        // Studio Podium Disc Platform with shadow reception
+        // Studio Podium Disc Platform with soft satin finish
         var discGeo = new THREE.CylinderGeometry(1.2, 1.25, 0.035, 64);
         var discMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            roughness: 0.35,
-            metalness: 0.08
+            color: 0xf1f3f7,
+            roughness: 0.65,
+            metalness: 0.05
         });
         var disc = new THREE.Mesh(discGeo, discMat);
         disc.position.set(0, -0.018, 0);
         disc.receiveShadow = true;
         podRingsGroup.add(disc);
 
-        // Subtle Edge Trim Ring
+        // Subtle Edge Trim Ring with luxury styling
         var trimGeo = new THREE.TorusGeometry(1.22, 0.008, 16, 64);
         var trimMat = new THREE.MeshStandardMaterial({
-            color: 0xd1d5db,
-            metalness: 0.35,
+            color: 0x7c3aed,
+            metalness: 0.45,
             roughness: 0.35
         });
         var trim = new THREE.Mesh(trimGeo, trimMat);
@@ -265,8 +265,8 @@
                             }
                         }
 
-                        mat.metalness = Math.min(mat.metalness !== undefined ? mat.metalness : 0.05, 0.25);
-                        mat.roughness = Math.max(mat.roughness !== undefined ? mat.roughness : 0.55, 0.35);
+                        mat.metalness = Math.min(mat.metalness !== undefined ? mat.metalness : 0.0, 0.12);
+                        mat.roughness = Math.max(mat.roughness !== undefined ? mat.roughness : 0.70, 0.60);
                         if (mat.emissive) {
                             mat.emissive.setHex(0x000000);
                         }
