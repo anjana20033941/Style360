@@ -30,3 +30,10 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Viva Preparation & Guide Documents (Keep locally, do NOT commit to GitHub)
+*viva*
+*Viva*
+Style360_*_Guide*.pdf
+generate_*viva*.py
+generate_*_pdf.py
