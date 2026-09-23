@@ -34,9 +34,9 @@ Thumbs.db
 # Viva Preparation & Guide Documents (Keep locally, do NOT commit to GitHub)
 *viva*
 *Viva*
+*member1*
 Style360_*_Guide*.pdf
-generate_*viva*.py
-generate_*_pdf.py
+generate_*.py
 
 # Group Distribution Bundles (Keep locally, do NOT commit to GitHub)
 group_distribution/
