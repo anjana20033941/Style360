@@ -37,3 +37,7 @@ Thumbs.db
 Style360_*_Guide*.pdf
 generate_*viva*.py
 generate_*_pdf.py
+
+# Group Distribution Bundles (Keep locally, do NOT commit to GitHub)
+group_distribution/
+distribute_group_project.py
