@@ -41,3 +41,4 @@ generate_*.py
 # Group Distribution Bundles (Keep locally, do NOT commit to GitHub)
 group_distribution/
 distribute_group_project.py
+update_distribution_headers.py
