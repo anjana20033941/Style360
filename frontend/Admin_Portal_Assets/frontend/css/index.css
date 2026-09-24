@@ -1,0 +1,303 @@
+/* ==========================================================================
+   Main Try-On Viewport Image & Container Styles (index.css)
+   Ensures proportional scaling, full head-to-legs visibility,
+   and prevents any cropping with object-fit: contain and object-position: top center.
+   ========================================================================== */
+
+/* Stage Viewport Panel Layout */
+.stage-view-panel#stage-panel-2d {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* Outer Output Wrapper: Reserves clearance at bottom for floating 3D trigger button */
+.output-image-wrapper,
+#stage-output-image-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.25rem 5.5rem 1.25rem;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Primary Target Containers */
+.stage-img-frame,
+#stage-img-frame,
+.generated-output,
+#generated-output {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    background: transparent;
+    border-radius: 16px;
+}
+
+/* Primary Try-On Output Image */
+.tryon-output-img,
+#generated-output img,
+#stage-output-tryon-img,
+.stage-img-frame img,
+.output-image-wrapper img {
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: top center !important;
+    display: block !important;
+    margin: 0 auto !important;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+    background: transparent;
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+}
+
+/* Responsive adjustments for shorter viewports */
+@media (max-height: 750px) {
+    .output-image-wrapper,
+    #stage-output-image-wrapper {
+        padding: 0.5rem 0.75rem 4.75rem 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   Left Sidebar Container Layout & Smooth Scrolling Fix
+   ========================================================================== */
+
+.tryon-col-left,
+.left-panel,
+.controls-sidebar,
+.step-container {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scroll-behavior: smooth !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    padding-right: 6px !important;
+    padding-bottom: 2.5rem !important;
+    box-sizing: border-box !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(124, 58, 237, 0.4) transparent !important;
+}
+
+/* Custom Smooth Webkit Scrollbar */
+.tryon-col-left::-webkit-scrollbar,
+.left-panel::-webkit-scrollbar,
+.controls-sidebar::-webkit-scrollbar,
+.step-container::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
+
+.tryon-col-left::-webkit-scrollbar-track,
+.left-panel::-webkit-scrollbar-track,
+.controls-sidebar::-webkit-scrollbar-track,
+.step-container::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: 8px !important;
+}
+
+.tryon-col-left::-webkit-scrollbar-thumb,
+.left-panel::-webkit-scrollbar-thumb,
+.controls-sidebar::-webkit-scrollbar-thumb,
+.step-container::-webkit-scrollbar-thumb {
+    background: rgba(124, 58, 237, 0.35) !important;
+    border-radius: 8px !important;
+    transition: background 0.2s ease !important;
+}
+
+.tryon-col-left::-webkit-scrollbar-thumb:hover,
+.left-panel::-webkit-scrollbar-thumb:hover,
+.controls-sidebar::-webkit-scrollbar-thumb:hover,
+.step-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(124, 58, 237, 0.7) !important;
+}
+
+/* ==========================================================================
+   Step 2 Flexbox / Overflow & Dynamic Height Adaptation
+   ========================================================================== */
+
+/* Step cards retain structure and do not compress inside the scrollable container */
+.tryon-modern-card,
+#card-step-1,
+#card-step-2,
+.step-card {
+    flex-shrink: 0 !important;
+    min-height: min-content !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Step 2 flex container */
+#card-step-2 {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: min-content !important;
+    box-sizing: border-box !important;
+}
+
+/* Prevent child elements within Step 2 from truncation or overflow */
+.custom-garment-dropzone,
+#garment-upload-dropzone,
+.selected-outfit-section,
+#selected-outfit-section,
+.selected-outfit-preview-card,
+.selected-outfit-card,
+#selected-outfit-preview-card,
+.garment-coverage-section,
+#garment-coverage-section,
+.btn-browse-catalog,
+.browse-catalog-btn,
+#btn-browse-collection-catalog,
+.tryon-action-card,
+.btn-generate-tryon-main,
+#btn-trigger-tryon-2col {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Dynamic height adjustment for Selected Outfit Preview Card */
+.selected-outfit-preview-card,
+.selected-outfit-card {
+    height: auto !important;
+    min-height: 72px !important;
+    max-height: none !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: visible !important;
+    transition: all 0.25s ease-in-out !important;
+}
+
+.selected-garment-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.selected-garment-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+.selected-garment-name {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Ensure Browse Catalog and Generate Try-On action buttons remain untruncated */
+.btn-browse-catalog,
+.browse-catalog-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin-bottom: 10px !important;
+}
+
+.tryon-action-card {
+    margin-top: 10px !important;
+}
+
+.btn-generate-tryon-main {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+}
+
+/* ==========================================================================
+   3D Viewer / Avatar Display Section: Studio Floor & Rotate Guide Styling
+   ========================================================================== */
+
+/* 1. Full 3D Viewport Coverage and Clean Studio Floor */
+.stage-view-panel#stage-panel-3d {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    background: radial-gradient(ellipse at 50% 85%, rgba(124, 58, 237, 0.05) 0%, transparent 60%), linear-gradient(180deg, #f4f5f8 0%, #e6e8ee 55%, #d9dce5 100%) !important;
+    background-image: none !important;
+    border-radius: 20px;
+    overflow: hidden !important;
+    z-index: 10;
+}
+
+.stage-canvas-wrapper,
+#stage-canvas-3d-mount,
+.scanner-pod-stage,
+.pod-canvas-container,
+.tryon-dedicated-section .scanner-pod-stage,
+.tryon-dedicated-section .pod-canvas-container {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    background: transparent !important;
+    border-radius: 20px;
+    overflow: hidden !important;
+}
+
+/* Remove any photo background vignette overlays */
+.stage-view-panel#stage-panel-3d::before,
+.stage-canvas-wrapper::before,
+.scanner-pod-stage::before {
+    display: none !important;
+}
+
+/* 2. Avatar Rotation Guide Circle Border: Subtle on white/light floor */
+.glass-pod-wrapper,
+.avatar-rotation-guide,
+.avatar-rotate-guide,
+.rotation-guide-circle,
+.pod-orbit-ring {
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    background: transparent !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Ensure Three.js canvas fills container cleanly with proper stacking */
+#stage-canvas-3d-mount canvas,
+.pod-canvas-container canvas,
+#viewer-canvas {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    outline: none !important;
+    z-index: 1;
+}
+
