@@ -1,4 +1,8 @@
 /**
+ * Style360
+ * Contributor: Member 3 (Frontend 3D Showcase & Gallery Contributor)
+ */
+/**
  * Style360 — 3D Models Gallery Controller (models3d.js)
  * Manages fetching, strict validation, and interactive rendering of user-generated 3D meshes:
  * 1. Strictly checks that glb_url / model_file is valid and functional before rendering.

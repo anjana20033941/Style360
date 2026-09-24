@@ -1,4 +1,8 @@
 /**
+ * Style360
+ * Contributor: Member 3 (Frontend 3D Showcase & Gallery Contributor)
+ */
+/**
  * Style360 — My Fashion Studio Hub (history.js)
  * High-performance controller for Virtual Try-On Gallery & Custom Requests Tracker:
  * 1. Prioritizes generated Fal.ai Try-On results (result_image_url / vton_output_url)
