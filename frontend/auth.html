@@ -513,7 +513,7 @@
 
 
     <!-- Back link -->
-    <a class="back-home" href="/style360/frontend/index.html">
+    <a class="back-home" href="index.html">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
         Back
     </a>
@@ -635,7 +635,7 @@
                 </div>
             </div>
 
-            <button class="btn-auth" type="button" onclick="window.location.href='/style360/frontend/index.html'" style="margin-bottom:10px;">
+            <button class="btn-auth" type="button" onclick="window.location.href='index.html'" style="margin-bottom:10px;">
                 <span class="btn-text">Proceed to 3D Try-On Studio →</span>
             </button>
             <button type="button" onclick="logoutUser()" style="background:none; border:none; color:#DC2626; font-size:0.85rem; font-weight:600; cursor:pointer;">
@@ -706,7 +706,6 @@
                     if (target === 'profile' || target === 'profile.html') {
                         return 'profile.html';
                     }
-                    return target;
                 }
             } catch(e) {}
             return 'index.html';
@@ -799,7 +798,7 @@
 
             btn.classList.add('loading');
 
-            fetch('/style360/backend/auth.php', {
+            fetch('../backend/auth.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -850,7 +849,7 @@
 
             btn.classList.add('loading');
 
-            fetch('/style360/backend/auth.php', {
+            fetch('../backend/auth.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'signin', email: email, password: pass })
