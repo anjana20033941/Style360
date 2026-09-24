@@ -1,4 +1,8 @@
 /**
+ * Style360
+ * Contributor: Member 3 (Frontend 3D Showcase & Gallery Contributor)
+ */
+/**
  * Style360 — Interactive Custom Request Progress Tracker (frontend/js/tracker.js)
  * Generates horizontal stage progression components with active status indicators.
  */
